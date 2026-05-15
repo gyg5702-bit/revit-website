@@ -3587,12 +3587,12 @@
     }, 300);
   }
 
-  function doLogout() {
+ function doLogout() {
     if (!confirm('로그아웃 하시겠습니까?')) return;
-    
-    // ── 인증 정보 삭제 ──
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    window.location.href = window.location.pathname;
+  }
     
     // ── 채팅/AI 관련 모든 localStorage 키 삭제 ──
     const keysToRemove = [];
