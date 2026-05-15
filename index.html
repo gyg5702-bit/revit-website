@@ -3589,13 +3589,63 @@
 
   function doLogout() {
     if (!confirm('로그아웃 하시겠습니까?')) return;
+    
+    // ── 인증 정보 삭제 ──
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    
+    // ── 채팅/AI 관련 모든 localStorage 키 삭제 ──
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (
+            key.toLowerCase().includes('chat') || 
+            key.toLowerCase().includes('ai') || 
+            key.toLowerCase().includes('message') ||
+            key.toLowerCase().includes('history') ||
+            key.toLowerCase().includes('reco') ||
+            key.toLowerCase().includes('order')
+        )) {
+            keysToRemove.push(key);
+        }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // ── 채팅 화면 HTML 초기화 ──
+    const possibleChatContainers = [
+        'ai-messages', 'chat-messages', 'chat-list', 
+        'message-list', 'ai-chat', 'chat-container'
+    ];
+    possibleChatContainers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    document.querySelectorAll('[class*="message"], [class*="chat-bubble"]').forEach(el => {
+        if (el.parentElement && el.parentElement.children.length > 1) {
+            el.remove();
+        }
+    });
+    
+    // ── 메모리 변수 초기화 (있으면) ──
+    try {
+        if (typeof aiMessages !== 'undefined') aiMessages = [];
+        if (typeof aiHistory !== 'undefined') aiHistory = [];
+        if (typeof chatMessages !== 'undefined') chatMessages = [];
+        if (typeof aiCurrentProjectId !== 'undefined') aiCurrentProjectId = null;
+        if (typeof recoState !== 'undefined') {
+            recoState.recommendations = [];
+            recoState.selections = {};
+        }
+    } catch (e) { /* 변수 없으면 무시 */ }
+    
+    // ── 사용자 정보 초기화 ──
     _currentUser = null;
     const badge = document.getElementById('user-badge');
     if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) { logoutBtn.style.display = 'none'; }
+    
+    // ── 화면 전환 ──
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
     showHeader(false);
     showScreen('splash');
