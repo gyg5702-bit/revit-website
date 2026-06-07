@@ -12,17 +12,20 @@
   :root {
     --orange:      #E87B0C;
     --orange-light:#F59235;
-    --orange-dim:  rgba(232,123,12,0.12);
-    --steel:       #0E0F11;
-    --steel-2:     #16181C;
-    --steel-3:     #1F2228;
-    --steel-4:     #2A2D35;
-    --border:      rgba(255,255,255,0.07);
-    --border-hover:rgba(255,255,255,0.15);
-    --text-primary:   #F0EEE8;
-    --text-secondary: #8A8F9A;
-    --text-muted:     #4E535E;
-    --blue-dim:    rgba(56,108,200,0.12);
+    --orange-dim:  rgba(232,123,12,0.10);
+    --steel:       #F8FAFC;
+    --steel-2:     #FFFFFF;
+    --steel-3:     #F1F5F9;
+    --steel-4:     #E2E8F0;
+    --border:      rgba(0,0,0,0.09);
+    --border-hover:rgba(0,0,0,0.18);
+    --text-primary:   #0F172A;
+    --text-secondary: #64748B;
+    --text-muted:     #94A3B8;
+    --blue:        #386CC8;
+    --blue-dim:    rgba(56,108,200,0.10);
+    --shadow:      0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-sm:   0 1px 3px rgba(0,0,0,0.07);
   }
 
   html, body {
@@ -38,8 +41,8 @@
     content: '';
     position: fixed; inset: 0;
     background-image:
-      linear-gradient(rgba(56,108,200,0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(56,108,200,0.035) 1px, transparent 1px);
+      linear-gradient(rgba(56,108,200,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,108,200,0.06) 1px, transparent 1px);
     background-size: 44px 44px;
     pointer-events: none; z-index: 0;
   }
@@ -71,6 +74,7 @@
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 36px 32px;
+    box-shadow: var(--shadow);
     position: relative; z-index: 2;
   }
 
@@ -148,7 +152,7 @@
     margin-bottom: 0.65rem;
     animation: up 0.6s 0.08s ease both;
   }
-  .splash-title .l1 { display: block; color: var(--text-primary); }
+  .splash-title .l1 { display: block; color: #0F172A; }
   .splash-title .l2 { display: block; color: var(--orange); }
 
   .splash-sub {
@@ -198,9 +202,10 @@
     height: 56px;
     display: flex; align-items: center;
     padding: 0 2.5rem;
-    background: rgba(14,15,17,0.9);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     z-index: 10;
     transition: opacity 0.45s ease;
   }
@@ -271,6 +276,7 @@
   .mode-card {
     background: var(--steel-2);
     border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
     border-radius: 16px;
     padding: 36px 32px 32px;
     cursor: pointer;
@@ -637,6 +643,7 @@
   .vendor-card {
     background: var(--steel-2);
     border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 14px;
@@ -774,7 +781,7 @@
     font-family: 'JetBrains Mono', monospace; font-size: 13px;
     color: var(--orange); letter-spacing: 1px;
   }
-  .invoice { background: var(--steel-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .invoice { background: var(--steel-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
   .invoice-header {
     background: var(--steel-4); padding: 14px 22px;
     display: flex; align-items: center; justify-content: space-between;
@@ -817,7 +824,7 @@
   .star-btn {
     font-size: 52px; cursor: pointer;
     transition: transform 0.15s, color 0.15s;
-    color: var(--steel-4);
+    color: #CBD5E1;
     background: none; border: none; padding: 0; line-height: 1;
     text-shadow: 0 0 0 rgba(0,0,0,0);
   }
@@ -891,6 +898,97 @@
   .bim-error-icon { font-size:32px; margin-bottom:12px; }
   .bim-error-msg  { font-size:14px; color:#f87171; font-weight:500; margin-bottom:8px; }
   .bim-error-sub  { font-size:12px; color:var(--text-muted); }
+
+  /* ═══════════════════════════════════
+     SC5 — 판매자 파트
+  ═══════════════════════════════════ */
+  #sc5-1, #sc5-2 { justify-content: center; padding: 2rem; overflow-y: auto; }
+  #sc5-3 { padding: 80px 2rem 60px; overflow-y: auto; align-items: flex-start; justify-content: flex-start; }
+
+  .vendor-login-box {
+    width: 100%; max-width: 420px;
+    background: var(--steel-2);
+    border: 1px solid rgba(56,108,200,0.2);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .vendor-login-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #386CC8, #6B9EE8);
+    border-radius: 20px 20px 0 0;
+  }
+  .vendor-badge-top {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(56,108,200,0.08); border: 1px solid rgba(56,108,200,0.2);
+    border-radius: 100px; padding: 4px 12px;
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    color: #386CC8; margin-bottom: 16px;
+  }
+
+  /* 대시보드 */
+  .sc5-inner { width: 100%; max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; }
+  .sc5-inner > * { animation: up 0.4s ease both; }
+  .sc5-inner > *:nth-child(1){animation-delay:.05s} .sc5-inner > *:nth-child(2){animation-delay:.10s}
+  .sc5-inner > *:nth-child(3){animation-delay:.15s} .sc5-inner > *:nth-child(4){animation-delay:.20s}
+  #sc5-3.hidden .sc5-inner > * { animation:none; opacity:0; }
+
+  /* 탭 */
+  .sc5-tabs { display:flex; gap:4px; background:var(--steel-3); border-radius:10px; padding:4px; margin-bottom:20px; }
+  .sc5-tab {
+    flex:1; padding:10px; border-radius:7px; border:none;
+    font-size:13px; font-weight:500; font-family:'Noto Sans KR',sans-serif;
+    cursor:pointer; transition:all 0.2s;
+    background:transparent; color:var(--text-secondary);
+  }
+  .sc5-tab.active { background:var(--steel-2); color:var(--text-primary); box-shadow:var(--shadow-sm); font-weight:600; }
+
+  /* 발주 요청 카드 */
+  .order-req-card {
+    background: var(--steel-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .order-req-card.new { border-color: rgba(232,123,12,0.35); }
+  .order-req-badge { padding:3px 10px; border-radius:100px; font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace; white-space:nowrap; }
+  .badge-new  { background:rgba(232,123,12,0.1); color:var(--orange); border:1px solid rgba(232,123,12,0.3); }
+  .badge-done { background:rgba(74,222,128,0.1); color:#16a34a; border:1px solid rgba(74,222,128,0.3); }
+  .badge-wait { background:rgba(56,108,200,0.1); color:#386CC8; border:1px solid rgba(56,108,200,0.2); }
+
+  .req-accept-btn {
+    padding:8px 16px; background:var(--orange); color:#fff;
+    border:none; border-radius:7px; font-size:12px; font-weight:600;
+    font-family:'Noto Sans KR',sans-serif; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .req-accept-btn:hover { background:var(--orange-light); }
+  .req-reject-btn {
+    padding:8px 14px; background:transparent; color:var(--text-secondary);
+    border:1px solid var(--border); border-radius:7px; font-size:12px; font-weight:500;
+    font-family:'Noto Sans KR',sans-serif; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .req-reject-btn:hover { border-color:var(--border-hover); color:#ef4444; }
+
+  /* 제품 행 */
+  .product-row {
+    background:var(--steel-2); border:1px solid var(--border); border-radius:10px;
+    padding:14px 18px; margin-bottom:8px; display:flex; align-items:center; gap:14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .product-row:hover { border-color:var(--border-hover); }
+
+  /* 업데이트 인풋 */
+  .update-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px; }
+  .update-field { display:flex; flex-direction:column; gap:6px; }
+  .update-label { font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--text-muted); letter-spacing:.5px; text-transform:uppercase; }
+  .update-input {
+    padding:10px 12px; background:var(--steel-3); border:1px solid var(--border);
+    border-radius:8px; color:var(--text-primary); font-size:13px;
+    font-family:'Noto Sans KR',sans-serif; transition:border-color 0.2s;
+  }
+  .update-input:focus { outline:none; border-color:var(--orange); }
 
   @media (max-width: 600px) {
     .modes { grid-template-columns: 1fr; }
@@ -1134,6 +1232,68 @@
   .card-viewer .card-icon { background: rgba(16,185,129,0.12); }
   .card-viewer .card-tag  { color: #34d399; }
   .card-viewer .card-arrow { color: #34d399; }
+
+  /* ═══════════════════════════════════
+     MODE 05 카드 (BIM 업로드 — 청록)
+  ═══════════════════════════════════ */
+  .card-upload { grid-column: 1 / -1; }   /* 마지막 1개라 두 칸 차지 */
+  .card-upload::before { background: linear-gradient(90deg, transparent, #06b6d4, transparent); }
+  .card-upload:hover { border-color: rgba(6,182,212,0.35); background: var(--steel-3); }
+  .card-upload .card-icon { background: rgba(6,182,212,0.12); }
+  .card-upload .card-tag  { color: #22d3ee; }
+  .card-upload .card-arrow { color: #22d3ee; }
+
+  /* SC-UPLOAD 화면 */
+  #sc-upload { padding: 80px 24px 40px; }
+  .upload-wrap {
+    max-width: 720px; margin: 0 auto;
+    background: var(--steel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .drop-zone {
+    border: 2px dashed var(--border-hover);
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--steel-3);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: #22d3ee;
+    background: rgba(6,182,212,0.05);
+    color: var(--text-primary);
+  }
+  .drop-zone .dz-icon { font-size: 42px; margin-bottom: 12px; }
+  .drop-zone .dz-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .drop-zone .dz-sub { font-size: 12px; color: var(--text-muted); }
+  .upload-input { margin-bottom: 14px; }
+  .upload-input label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .upload-input input {
+    width: 100%; background: var(--steel-3);
+    border: 1px solid var(--border); border-radius: 7px;
+    padding: 10px 12px; color: var(--text-primary);
+    font-size: 14px; font-family: inherit;
+  }
+  .upload-log {
+    background: var(--steel-1);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    max-height: 240px; overflow-y: auto;
+    margin-top: 16px;
+    white-space: pre-wrap;
+  }
+  .upload-log .ok { color: #34d399; }
+  .upload-log .warn { color: #fbbf24; }
+  .upload-log .err { color: #f87171; }
 
   /* ═══════════════════════════════════
      SC-IFC — 3D 모델 뷰어 (iframe)
@@ -1438,7 +1598,6 @@
     이전으로
   </button>
   <span id="user-badge" style="margin-left:12px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);display:none"></span>
-  <button id="logout-btn" onclick="doLogout()" style="display:none;margin-left:12px;padding:6px 14px;font-size:12px;background:rgba(255,80,80,0.15);color:#ff8080;border:1px solid rgba(255,80,80,0.3);border-radius:4px;cursor:pointer;font-family:'JetBrains Mono',monospace">로그아웃</button>
 </div>
 
 <!-- ══════════════════════════════════
@@ -1446,12 +1605,6 @@
 ══════════════════════════════════ -->
 <div class="screen" id="splash">
 
-  <!-- 오른쪽 위 로그인 버튼 -->
-  <div style="position:absolute;top:20px;right:24px;z-index:10">
-    <button onclick="goSC41()" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:8px 18px;color:var(--text-secondary);font-size:13px;font-weight:500;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--border-hover)'" onmouseout="this.style.color='var(--text-secondary)';this.style.borderColor='var(--border)'">
-      로그인하기
-    </button>
-  </div>
   <div class="rebar-icon">
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
       <rect x="2"  y="12" width="28" height="4"  rx="2" fill="#E87B0C"/>
@@ -1468,7 +1621,7 @@
 
   <p class="splash-sub">BIM 기반 자재 발주 자동화 플랫폼</p>
 
-  <button class="cta-btn" onclick="goMode()">
+  <button class="cta-btn" onclick="goSC40()">
     배달의 철근 사용하기
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1532,6 +1685,17 @@
         <p class="card-desc">서버의 IFC 파일을 브라우저에서 직접 렌더링. 부재 클릭 시 발주 정보·좌표가 즉시 표시됩니다. 카테고리별 자동 색상, 검색, 층 필터 지원.</p>
         <span class="card-arrow">
           모델 열기
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+
+      <div class="mode-card card-upload" onclick="goBIMUpload()">
+        <div class="card-icon">📤</div>
+        <span class="card-tag">MODE 05 — BIM 업로드</span>
+        <div class="card-title">IFC 파일에서<br>자재 자동 추출</div>
+        <p class="card-desc">Revit·BuildingCheck 없이도 IFC 파일만 드래그하면 브라우저가 직접 파싱해 자재·층·좌표를 추출하고, 서버에 envelope JSON·IFC 한 번에 업로드합니다.</p>
+        <span class="card-arrow">
+          IFC 파일 업로드
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
       </div>
@@ -1784,10 +1948,63 @@
 </div>
 
 <!-- ══════════════════════════════════
+     SC4-0 — 로그인 역할 선택
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc4-0">
+  <div style="width:100%;max-width:440px;padding:2rem">
+
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px">
+        배달의 <span style="color:var(--orange)">철근</span>
+      </div>
+      <p style="font-size:14px;color:var(--text-secondary)">어떤 계정으로 로그인하시겠어요?</p>
+    </div>
+
+    <!-- 구매자 카드 -->
+    <div onclick="goSC41()"
+      style="background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:14px;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:20px"
+      onmouseover="this.style.borderColor='var(--orange)';this.style.background='#FFFBF7';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.background='#fff';this.style.transform='translateY(0)'">
+      <div style="width:52px;height:52px;background:var(--orange-dim);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🛒</div>
+      <div style="flex:1">
+        <p style="font-size:16px;font-weight:700;margin-bottom:4px">구매자 로그인</p>
+        <p style="font-size:12px;color:var(--text-secondary)">자재 발주 및 업체 추천을 이용합니다</p>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="color:var(--text-muted)"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- 판매자 카드 -->
+    <div onclick="goSC51()"
+      style="background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:20px"
+      onmouseover="this.style.borderColor='#386CC8';this.style.background='#F7FAFF';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.background='#fff';this.style.transform='translateY(0)'">
+      <div style="width:52px;height:52px;background:rgba(56,108,200,0.10);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏭</div>
+      <div style="flex:1">
+        <p style="font-size:16px;font-weight:700;margin-bottom:4px">판매자 로그인</p>
+        <p style="font-size:12px;color:var(--text-secondary)">발주 수신 및 업체 정보를 관리합니다</p>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="color:var(--text-muted)"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <button onclick="goBackFromSC40()" style="width:100%;margin-top:16px;padding:12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.borderColor='var(--border-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 7H3M5.5 4L3 7l2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      처음 화면으로
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
      SC4-1 — 로그인
 ══════════════════════════════════ -->
 <div class="screen hidden" id="sc4-1">
   <div class="login-box">
+    <!-- 뒤로가기 -->
+    <button onclick="goBackFromLogin()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;padding:0;margin-bottom:20px;transition:color 0.2s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      이전으로
+    </button>
+
     <div class="login-logo">
       <div class="logo-mark" style="width:36px;height:36px;margin:0 auto 12px">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -1798,18 +2015,22 @@
         </svg>
       </div>
       <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px">배달의 <span style="color:var(--orange)">철근</span></div>
-      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">로그인</div>
+      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">구매자 로그인</div>
     </div>
 
     <div class="lfield">
       <label class="llabel">이메일</label>
-      <input class="linput" type="email" id="l-email" placeholder="example@khu.ac.kr">
+      <input class="linput" type="email" id="l-email" placeholder="example@khu.ac.kr" onfocus="clearLoginError()">
     </div>
     <div class="lfield">
       <label class="llabel">비밀번호</label>
-      <input class="linput" type="password" id="l-pw" placeholder="비밀번호 입력">
+      <input class="linput" type="password" id="l-pw" placeholder="비밀번호 입력" onfocus="clearLoginError()">
     </div>
-    <button class="submit-btn" onclick="doLogin()" style="margin-top:8px">
+    <div id="login-error" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#DC2626;font-weight:500">
+      ⚠️ 회원 정보가 없습니다. 이메일 또는 비밀번호를 확인해주세요.
+    </div>
+
+    <button class="submit-btn" onclick="doLogin()" style="margin-top:12px">
       로그인
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
@@ -1817,10 +2038,6 @@
       계정이 없으신가요?
       <span onclick="goSC42()" style="color:var(--orange);cursor:pointer;font-weight:600;margin-left:4px">회원가입</span>
     </p>
-    <button onclick="goBackFromLogin()" style="width:100%;margin-top:14px;padding:11px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.borderColor='var(--border-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 7H3M5.5 4L3 7l2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      처음 화면으로 돌아가기
-    </button>
   </div>
 </div>
 
@@ -1829,9 +2046,14 @@
 ══════════════════════════════════ -->
 <div class="screen hidden" id="sc4-2">
   <div class="login-box" style="max-width:420px">
+    <!-- 뒤로가기 -->
+    <button onclick="goSC41()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;padding:0;margin-bottom:20px;transition:color 0.2s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      로그인으로
+    </button>
     <div class="login-logo">
       <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px">배달의 <span style="color:var(--orange)">철근</span></div>
-      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">회원가입</div>
+      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">구매자 회원가입</div>
     </div>
 
     <div class="lfield">
@@ -1862,16 +2084,310 @@
       이미 계정이 있으신가요?
       <span onclick="goSC41()" style="color:var(--orange);cursor:pointer;font-weight:600;margin-left:4px">로그인</span>
     </p>
-    <button onclick="goBackFromLogin()" style="width:100%;margin-top:10px;padding:11px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.borderColor='var(--border-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 7H3M5.5 4L3 7l2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      처음 화면으로 돌아가기
-    </button>
   </div>
 </div>
 
 <!-- ══════════════════════════════════
-     SC3-1 — BIM 연동 발주
+     SC5-1 — 판매자 로그인
 ══════════════════════════════════ -->
+<div class="screen hidden" id="sc5-1">
+  <div class="vendor-login-box">
+    <!-- 뒤로가기 -->
+    <button onclick="goBackFromVendor()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;padding:0;margin-bottom:20px;transition:color 0.2s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      이전으로
+    </button>
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="vendor-badge-top">🏭 판매자 포털</div>
+      <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px">배달의 <span style="color:var(--orange)">철근</span></div>
+      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">판매자 로그인</div>
+    </div>
+    <div class="lfield">
+      <label class="llabel">이메일</label>
+      <input class="linput" type="email" id="v-email" placeholder="vendor@company.com" onfocus="clearVendorLoginError()">
+    </div>
+    <div class="lfield">
+      <label class="llabel">비밀번호</label>
+      <input class="linput" type="password" id="v-pw" placeholder="비밀번호 입력" onfocus="clearVendorLoginError()">
+    </div>
+
+    <!-- 에러 메시지 영역 -->
+    <div id="vendor-login-error" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#DC2626;font-weight:500">
+      ⚠️ 회원 정보가 없습니다. 이메일 또는 비밀번호를 확인해주세요.
+    </div>
+
+    <button class="submit-btn" onclick="doVendorLogin()" style="margin-top:12px;background:#386CC8" onmouseover="this.style.background='#4A7FD6'" onmouseout="this.style.background='#386CC8'">
+      판매자 로그인
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted)">
+      아직 계정이 없으신가요?
+      <span onclick="goSC52()" style="color:#386CC8;cursor:pointer;font-weight:600;margin-left:4px">판매자 등록</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SC5-2 — 판매자 회원가입
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc5-2">
+  <div class="vendor-login-box" style="max-width:500px;overflow-y:auto;max-height:90vh">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="vendor-badge-top">🏭 판매자 포털</div>
+      <div style="font-size:20px;font-weight:900;letter-spacing:-0.5px">판매자 등록</div>
+      <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:4px">업체 정보를 입력해주세요</div>
+    </div>
+
+    <!-- 기본 정보 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">01 · 업체 기본 정보</p>
+    <div class="lfield">
+      <label class="llabel">업체명 <span style="color:#ef4444">*</span></label>
+      <input class="linput" type="text" id="v-company" placeholder="(주)수원철강">
+    </div>
+    <div class="lfield">
+      <label class="llabel">사업자등록번호 <span style="color:#ef4444">*</span></label>
+      <input class="linput" type="text" id="v-bizno" placeholder="000-00-00000">
+    </div>
+    <div class="lfield">
+      <label class="llabel">업체 주소 <span style="color:#ef4444">*</span></label>
+      <input class="linput" type="text" id="v-addr" placeholder="경기도 수원시 권선구 산업로 156">
+    </div>
+    <div class="lfield">
+      <label class="llabel">대표 연락처 <span style="color:#ef4444">*</span></label>
+      <input class="linput" type="text" id="v-tel" placeholder="031-000-0000">
+    </div>
+
+    <!-- 취급 제품 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin:20px 0 12px">02 · 취급 제품</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-rebar" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🔩 철근</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-masonry" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🧱 조적조</span>
+      </label>
+    </div>
+
+    <!-- 단가 / 재고 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">03 · 초기 단가 / 재고</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="lfield">
+        <label class="llabel">철근 단가 (원/ton)</label>
+        <input class="linput" type="number" id="v-price-rebar" placeholder="1035000">
+      </div>
+      <div class="lfield">
+        <label class="llabel">조적 단가 (원/장)</label>
+        <input class="linput" type="number" id="v-price-masonry" placeholder="85">
+      </div>
+      <div class="lfield">
+        <label class="llabel">철근 재고 (ton)</label>
+        <input class="linput" type="number" id="v-stock-rebar" placeholder="50">
+      </div>
+      <div class="lfield">
+        <label class="llabel">조적 재고 (장)</label>
+        <input class="linput" type="number" id="v-stock-masonry" placeholder="10000">
+      </div>
+    </div>
+
+    <!-- 패밀리 파일 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">04 · 패밀리 파일 등록 <span style="color:var(--text-muted);font-weight:300;font-size:10px">(선택)</span></p>
+    <div onclick="document.getElementById('v-family-input').click()"
+      style="border:2px dashed rgba(56,108,200,0.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:16px;transition:all 0.2s;background:rgba(56,108,200,0.03)"
+      onmouseover="this.style.borderColor='rgba(56,108,200,0.6)';this.style.background='rgba(56,108,200,0.06)'"
+      onmouseout="this.style.borderColor='rgba(56,108,200,0.3)';this.style.background='rgba(56,108,200,0.03)'">
+      <p style="font-size:20px;margin-bottom:6px">📁</p>
+      <p style="font-size:13px;font-weight:600;margin-bottom:4px">Revit 패밀리 파일 업로드</p>
+      <p style="font-size:11px;color:var(--text-muted)">.rfa 파일 · 규격, 사양 정보가 자동으로 추출됩니다</p>
+      <p id="v-family-name" style="font-size:12px;color:#386CC8;margin-top:6px;font-weight:600"></p>
+    </div>
+    <input type="file" id="v-family-input" accept=".rfa,.rvt" style="display:none" onchange="document.getElementById('v-family-name').textContent = this.files[0]?.name || ''">
+
+    <!-- 계정 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">05 · 계정 정보</p>
+    <div class="lfield">
+      <label class="llabel">이메일 <span style="color:#ef4444">*</span></label>
+      <input class="linput" type="email" id="vs-email" placeholder="vendor@company.com">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="lfield">
+        <label class="llabel">비밀번호 <span style="color:#ef4444">*</span></label>
+        <input class="linput" type="password" id="vs-pw" placeholder="8자 이상">
+      </div>
+      <div class="lfield">
+        <label class="llabel">비밀번호 확인</label>
+        <input class="linput" type="password" id="vs-pw2" placeholder="재입력">
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="doVendorSignup()" style="background:#386CC8" onmouseover="this.style.background='#4A7FD6'" onmouseout="this.style.background='#386CC8'">
+      판매자 등록 완료
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--text-muted)">
+      이미 등록하셨나요?
+      <span onclick="goSC51()" style="color:#386CC8;cursor:pointer;font-weight:600;margin-left:4px">로그인</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SC5-3 — 판매자 대시보드
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc5-3">
+  <div class="sc5-inner">
+
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <p class="do-step-label" style="color:#386CC8">// 판매자 대시보드</p>
+        <h2 class="do-title" style="margin-bottom:0" id="v-dashboard-title">안녕하세요</h2>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="v-order-badge" style="display:none;background:rgba(232,123,12,0.1);border:1px solid rgba(232,123,12,0.3);color:var(--orange);font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace"></span>
+        <button onclick="refreshOrders()" style="padding:8px 14px;background:transparent;border:1px solid rgba(56,108,200,0.3);border-radius:8px;color:#386CC8;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(56,108,200,0.07)'" onmouseout="this.style.background='transparent'">🔄 새로고침</button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1.6rem" id="v-dashboard-sub">발주 요청을 확인하고 제품 정보를 관리하세요</p>
+
+    <!-- 탭 -->
+    <div class="sc5-tabs">
+      <button class="sc5-tab active" id="tab-orders"   onclick="switchVendorTab('orders')">📬 발주 요청</button>
+      <button class="sc5-tab"        id="tab-products"  onclick="switchVendorTab('products')">📦 제품 관리</button>
+      <button class="sc5-tab"        id="tab-info"      onclick="switchVendorTab('info')">🏭 업체 정보</button>
+    </div>
+
+    <!-- ── 발주 요청 탭 ── -->
+    <div id="panel-orders">
+      <div id="orders-loading" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px">
+        <div class="bim-spinner" style="margin:0 auto 12px"></div>
+        발주 요청을 불러오는 중...
+      </div>
+      <div id="orders-empty" style="display:none;text-align:center;padding:40px 20px;background:var(--steel-2);border:1px solid var(--border);border-radius:14px">
+        <p style="font-size:32px;margin-bottom:12px">📭</p>
+        <p style="font-size:15px;font-weight:600;margin-bottom:6px">아직 발주 요청이 없습니다</p>
+        <p style="font-size:12px;color:var(--text-muted)">구매자가 발주하면 여기에 표시됩니다</p>
+      </div>
+      <div id="orders-list"></div>
+    </div>
+
+    <!-- ── 제품 관리 탭 ── -->
+    <div id="panel-products" style="display:none">
+      <!-- 철근 -->
+      <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <p style="font-size:15px;font-weight:700">🔩 철근</p>
+          <span id="rebar-save-status" style="font-size:12px;color:#16a34a;display:none">✓ 저장됨</span>
+        </div>
+        <div class="update-row">
+          <div class="update-field">
+            <label class="update-label">단가 (원/ton)</label>
+            <input class="update-input" type="number" id="u-rebar-price" placeholder="예: 1035000">
+          </div>
+          <div class="update-field">
+            <label class="update-label">재고 (ton)</label>
+            <input class="update-input" type="number" id="u-rebar-stock" placeholder="예: 50">
+          </div>
+          <div class="update-field">
+            <label class="update-label">납품 가능 (영업일)</label>
+            <input class="update-input" type="number" id="u-rebar-days" placeholder="예: 2">
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+          <div class="update-field" style="flex:1;min-width:180px">
+            <label class="update-label">취급 규격</label>
+            <input class="update-input" type="text" id="u-rebar-spec" placeholder="예: D10, D13, D16, D19, D25" style="width:100%">
+          </div>
+          <div class="update-field" style="flex:1;min-width:120px">
+            <label class="update-label">최소 주문 (ton)</label>
+            <input class="update-input" type="number" id="u-rebar-minorder" placeholder="예: 2">
+          </div>
+        </div>
+        <button onclick="saveProduct('rebar')" style="margin-top:14px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--orange-light)'" onmouseout="this.style.background='var(--orange)'">저장하기</button>
+      </div>
+
+      <!-- 조적조 -->
+      <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <p style="font-size:15px;font-weight:700">🧱 조적조</p>
+          <span id="masonry-save-status" style="font-size:12px;color:#16a34a;display:none">✓ 저장됨</span>
+        </div>
+        <div class="update-row">
+          <div class="update-field">
+            <label class="update-label">단가 (원/장)</label>
+            <input class="update-input" type="number" id="u-mas-price" placeholder="예: 85">
+          </div>
+          <div class="update-field">
+            <label class="update-label">재고 (장)</label>
+            <input class="update-input" type="number" id="u-mas-stock" placeholder="예: 10000">
+          </div>
+          <div class="update-field">
+            <label class="update-label">납품 가능 (영업일)</label>
+            <input class="update-input" type="number" id="u-mas-days" placeholder="예: 3">
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+          <div class="update-field" style="flex:1;min-width:180px">
+            <label class="update-label">취급 품목</label>
+            <input class="update-input" type="text" id="u-mas-spec" placeholder="예: 시멘트블록 0.5B, 1.0B" style="width:100%">
+          </div>
+          <div class="update-field" style="flex:1;min-width:120px">
+            <label class="update-label">최소 주문 (장)</label>
+            <input class="update-input" type="number" id="u-mas-minorder" placeholder="예: 1000">
+          </div>
+        </div>
+        <button onclick="saveProduct('masonry')" style="margin-top:14px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--orange-light)'" onmouseout="this.style.background='var(--orange)'">저장하기</button>
+      </div>
+    </div>
+
+    <!-- ── 업체 정보 탭 ── -->
+    <div id="panel-info" style="display:none">
+      <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <p style="font-size:15px;font-weight:700">업체 기본 정보</p>
+          <span id="info-save-status" style="font-size:12px;color:#16a34a;display:none">✓ 저장됨</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="update-field full" style="grid-column:1/-1">
+            <label class="update-label">업체명</label>
+            <input class="update-input" type="text" id="ei-company" style="width:100%">
+          </div>
+          <div class="update-field">
+            <label class="update-label">사업자등록번호</label>
+            <input class="update-input" type="text" id="ei-bizno">
+          </div>
+          <div class="update-field">
+            <label class="update-label">대표 연락처</label>
+            <input class="update-input" type="text" id="ei-tel">
+          </div>
+          <div class="update-field full" style="grid-column:1/-1">
+            <label class="update-label">업체 주소</label>
+            <input class="update-input" type="text" id="ei-addr" style="width:100%">
+          </div>
+          <div class="update-field full" style="grid-column:1/-1">
+            <label class="update-label">업체 소개 (선택)</label>
+            <textarea class="update-input" id="ei-desc" rows="3" style="width:100%;resize:vertical" placeholder="업체 소개, 특이사항 등"></textarea>
+          </div>
+        </div>
+        <button onclick="saveVendorInfo()" style="padding:10px 24px;background:#386CC8;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='#4A7FD6'" onmouseout="this.style.background='#386CC8'">정보 저장</button>
+
+        <!-- 패밀리 파일 -->
+        <div style="border-top:1px solid var(--border);padding-top:18px;margin-top:20px">
+          <p style="font-size:13px;font-weight:600;margin-bottom:4px">패밀리 파일 (.rfa)</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">구매 마무리 단계에서 고객에게 제품 상세 정보가 표시됩니다</p>
+          <div onclick="document.getElementById('v-family-update').click()" style="border:2px dashed rgba(56,108,200,0.3);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(56,108,200,0.6)';this.style.background='rgba(56,108,200,0.04)'" onmouseout="this.style.borderColor='rgba(56,108,200,0.3)';this.style.background='transparent'">
+            <p style="font-size:13px;font-weight:600;color:#386CC8">📁 패밀리 파일 업로드</p>
+            <p id="v-family-fname" style="font-size:12px;color:var(--text-muted);margin-top:4px">파일을 선택하세요 (.rfa)</p>
+          </div>
+          <input type="file" id="v-family-update" accept=".rfa" style="display:none" onchange="document.getElementById('v-family-fname').textContent = this.files[0]?.name || '파일을 선택하세요'">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="screen hidden" id="sc3-1">
   <div class="sc31-inner">
 
@@ -1882,10 +2398,6 @@
     <div id="sc31-loading" class="bim-loading">
       <div class="bim-spinner"></div>
       <p style="font-size:13px;color:var(--text-secondary)">서버에서 데이터를 불러오는 중...</p>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:4px">무료 서버는 첫 요청 시 50초 정도 걸릴 수 있습니다</p>
-      <button onclick="showJSONUpload()" style="margin-top:12px;background:transparent;border:1px solid var(--border);border-radius:8px;padding:8px 18px;color:var(--text-secondary);font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--border-hover)'" onmouseout="this.style.color='var(--text-secondary)';this.style.borderColor='var(--border)'">
-        📂 JSON 파일로 직접 불러오기
-      </button>
     </div>
 
     <div id="sc31-content" style="display:none">
@@ -1944,24 +2456,11 @@
       <div class="bim-error">
         <div class="bim-error-icon">⚠️</div>
         <p class="bim-error-msg" id="sc31-error-msg">서버 연결에 실패했습니다</p>
-        <p class="bim-error-sub">렌더 서버가 실행 중인지 확인해주세요<br>또는 JSON 파일을 직접 불러올 수 있습니다</p>
+        <p class="bim-error-sub">렌더 서버가 실행 중인지 확인해주세요</p>
       </div>
-      <button class="submit-btn" onclick="retryFetchBIM()" style="background:var(--steel-4);color:var(--text-secondary);margin-bottom:10px">
-        🔄 다시 시도
+      <button class="submit-btn" onclick="retryFetchBIM()" style="background:var(--steel-4);color:var(--text-secondary)">
+        다시 시도
       </button>
-
-      <!-- JSON 파일 직접 업로드 -->
-      <div id="json-drop-zone"
-        onclick="document.getElementById('json-file-input').click()"
-        ondragover="event.preventDefault();this.style.borderColor='var(--orange)';this.style.background='var(--orange-dim)'"
-        ondragleave="this.style.borderColor='rgba(232,123,12,0.3)';this.style.background='transparent'"
-        ondrop="event.preventDefault();this.style.borderColor='rgba(232,123,12,0.3)';this.style.background='transparent';handleJSONDrop(event)"
-        style="border:2px dashed rgba(232,123,12,0.3);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-top:4px">
-        <p style="font-size:24px;margin-bottom:10px">📂</p>
-        <p style="font-size:14px;font-weight:600;margin-bottom:6px">JSON 파일 직접 불러오기</p>
-        <p style="font-size:12px;color:var(--text-muted)">클릭하거나 파일을 여기에 끌어다 놓으세요<br>Revit에서 내보낸 JSON 파일 (예: P001_export.json)</p>
-      </div>
-      <input type="file" id="json-file-input" accept=".json" style="display:none" onchange="handleJSONFile(this)">
     </div>
 
   </div>
@@ -2039,13 +2538,21 @@
       <div class="price-big" id="sc33-grand-total">0원</div>
     </div>
 
-    <div style="display:flex;gap:10px;margin-top:8px">
-      <button class="submit-btn" style="background:var(--steel-4);color:var(--text-primary);flex:1" onclick="goSplash()">
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <button class="submit-btn" style="background:var(--steel-4);color:var(--text-primary);flex:1;min-width:140px" onclick="goSplash()">
         처음으로 돌아가기
       </button>
-      <button class="submit-btn" style="flex:1" onclick="downloadOrderJSON()">
-        📄 발주서 다운로드
+      <button class="submit-btn" style="flex:1;min-width:140px;background:#10b981" onclick="goIFCViewerAfterOrder()">
+        🏛️ 3D 뷰어에서 보기
       </button>
+      <button class="submit-btn" style="flex:1;min-width:140px" onclick="downloadOrderDocx()">
+        📄 발주서 다운로드 (DOCX)
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <a onclick="downloadOrderJSON()" style="color:var(--text-muted);font-size:12px;text-decoration:underline;cursor:pointer">
+        ↓ 발주 내역 JSON 백업 다운로드
+      </a>
     </div>
   </div>
 </div>
@@ -2116,24 +2623,149 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════
+     SC-UPLOAD — MODE 05 BIM 업로드 (브라우저 측 IFC 파싱)
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc-upload">
+  <div class="upload-wrap">
+    <h2 style="margin:0 0 6px;font-size:22px;font-weight:900;color:var(--text-primary)">BIM 업로드 — IFC 파싱</h2>
+    <p style="margin:0 0 22px;font-size:13px;color:var(--text-muted)">
+      Revit이 없어도 IFC 파일만 있으면 자재·층·좌표를 자동 추출합니다.
+      파싱은 브라우저에서 직접 수행 (web-ifc WASM).
+    </p>
+
+    <div class="upload-input">
+      <label>프로젝트 ID</label>
+      <input type="text" id="up-project-id" placeholder="예: P002" value="">
+    </div>
+    <div class="upload-input">
+      <label>프로젝트 이름</label>
+      <input type="text" id="up-project-name" placeholder="예: 강남 오피스 타워" value="">
+    </div>
+
+    <div class="drop-zone" id="up-drop-zone" onclick="document.getElementById('up-ifc-file').click()">
+      <div class="dz-icon">📁</div>
+      <div class="dz-title">IFC 파일을 드래그하거나 클릭해서 선택</div>
+      <div class="dz-sub">.ifc · 권장 IFC2x3 또는 IFC4 · 최대 약 100MB</div>
+      <div id="up-file-info" style="margin-top:12px;color:#22d3ee;font-weight:700"></div>
+    </div>
+    <input type="file" id="up-ifc-file" accept=".ifc" style="display:none" onchange="handleIFCFileSelect(event)">
+
+    <button class="submit-btn" id="up-go-btn" style="width:100%" onclick="doIFCUpload()" disabled>
+      🚀 파싱 후 서버 업로드
+    </button>
+
+    <div class="upload-log" id="up-log">대기 중…</div>
+  </div>
+</div>
+
 <script>
   const RENDER_SERVER_URL = 'https://revit-llm-backend.onrender.com';
-
-  // ── 모든 fetch 호출에 자동으로 토큰 첨부 ──
-  const _originalFetch = window.fetch;
-  window.fetch = function(url, options = {}) {
-    if (typeof url === 'string' && url.startsWith(RENDER_SERVER_URL)) {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        options.headers = options.headers || {};
-        options.headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-    return _originalFetch.call(window, url, options);
-  };
-
   let sc21Selected = null;   // 'rebar' | 'masonry'
   let itemCount = 0;
+
+  /* ── 로컬 토큰 브리지 (사이트 ↔ MCP 자동 동기화) ── */
+  const BRIDGE_URL = 'http://127.0.0.1:7842';
+  const PAIRING_KEY = 'delivery_pairing_code';   // localStorage 키
+
+  async function bridgeHealth() {
+    try {
+      const r = await fetch(`${BRIDGE_URL}/health`, { signal: AbortSignal.timeout(800) });
+      return r.ok ? await r.json() : null;
+    } catch { return null; }   // 브리지 미가동 → 정상 (선택 기능)
+  }
+
+  function getPairingCode() {
+    return localStorage.getItem(PAIRING_KEY) || '';
+  }
+
+  function askPairingCode() {
+    // Add-in으로 로그인하는 게 권장 흐름 — 페어링 모달은 명시적 동기화를 원할 때만 사용.
+    // 이 함수는 사용자가 "수동 동기화" 버튼을 누르는 등 명시적 요청 시 호출.
+    const v = prompt(
+      '[선택] Claude Desktop(MCP)에 사이트 토큰을 동기화하려면 페어링 코드를 입력하세요.\n\n' +
+      '코드 파일 위치: C:\\Users\\<사용자>\\.delivery_rebar\\pairing.txt\n' +
+      '(권장: BuildingCheck Add-in의 [서버 로그인] 버튼이 이 단계를 우회합니다)\n\n' +
+      '취소를 누르면 사이트만 사용. MCP는 별도 인증 필요.'
+    );
+    if (v && /^[A-Z0-9]{6,}$/i.test(v.trim())) {
+      const code = v.trim().toUpperCase();
+      localStorage.setItem(PAIRING_KEY, code);
+      return code;
+    }
+    return '';
+  }
+
+  async function syncTokenToBridge(authData) {
+    const health = await bridgeHealth();
+    if (!health) return { synced: false, reason: '브리지 미가동 (Claude Desktop 꺼짐 — 정상)' };
+    // 이미 페어링된 경우만 자동 동기화. 미페어링 시 조용히 스킵 (Add-in 로그인이 권장 경로).
+    const code = getPairingCode();
+    if (!code) return { synced: false, reason: '페어링 미설정 — Add-in 로그인 권장' };
+    try {
+      const r = await fetch(`${BRIDGE_URL}/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Pairing-Code': code },
+        body: JSON.stringify({
+          token: authData.token,
+          user_id: authData.user_id,
+          email: authData.email,
+          name: authData.name,
+        }),
+      });
+      if (r.status === 401) {
+        // 페어링 코드 잘못됨 → 캐시 비우고 사용자에게 알림
+        localStorage.removeItem(PAIRING_KEY);
+        return { synced: false, reason: '페어링 코드가 일치하지 않습니다. 다음 로그인 시 다시 입력 요청됩니다.' };
+      }
+      if (!r.ok) return { synced: false, reason: `브리지 HTTP ${r.status}` };
+      const j = await r.json();
+      return { synced: true, user: j.user };
+    } catch (e) {
+      return { synced: false, reason: e.message };
+    }
+  }
+
+  async function clearTokenOnBridge() {
+    const code = getPairingCode();
+    if (!code) return;
+    try {
+      await fetch(`${BRIDGE_URL}/token`, {
+        method: 'DELETE',
+        headers: { 'X-Pairing-Code': code },
+        signal: AbortSignal.timeout(800),
+      });
+    } catch { /* 무시 */ }
+  }
+
+  /* ── 인증 토큰 (백엔드 v0.4.0 HTTPBearer) ── */
+  const AUTH_KEY = 'delivery_auth';
+  function getAuth() {
+    try { return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function setAuth(a) { localStorage.setItem(AUTH_KEY, JSON.stringify(a)); }
+  function clearAuth() { localStorage.removeItem(AUTH_KEY); }
+  function authHeader() {
+    const a = getAuth();
+    return a?.token ? { 'Authorization': `Bearer ${a.token}` } : {};
+  }
+  async function apiFetch(path, opts = {}) {
+    const url = path.startsWith('http') ? path : `${RENDER_SERVER_URL}${path}`;
+    const res = await fetch(url, {
+      ...opts,
+      headers: { ...(opts.headers || {}), ...authHeader() }
+    });
+    if (res.status === 401) {
+      clearAuth();
+      const badge = document.getElementById('user-badge');
+      if (badge) badge.style.display = 'none';
+      alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+      goSC41();
+      throw new Error('401 Unauthorized');
+    }
+    return res;
+  }
 
   /* ── 화면 유틸 ── */
   function showScreen(id) {
@@ -2155,6 +2787,11 @@
 
   /* ── 화면 전환 ── */
   function goMode() {
+    // 토큰이 없으면 로그인 화면으로 우회
+    if (!getAuth()?.token) {
+      goSC41();
+      return;
+    }
     document.getElementById('splash').classList.add('hidden');
     setTimeout(() => {
       showScreen('modesel'); showHeader(true);
@@ -2198,7 +2835,7 @@
     selectEl.innerHTML = '<option value="">불러오는 중…</option>';
 
     try {
-      const res = await fetch(`${RENDER_SERVER_URL}/api/revit/data`);
+      const res = await apiFetch(`/api/revit/data`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       ifcProjects = await res.json();
 
@@ -2240,9 +2877,308 @@
       newTabLink.href = '#';
       return;
     }
-    const url = `viewer.html?backend=render&project=${encodeURIComponent(projectId)}`;
+    const a = getAuth();
+    const tokenQS = a?.token ? `&token=${encodeURIComponent(a.token)}` : '';
+    // 캐시버스터(_v) — iframe이 옛 viewer.html을 캐시에서 로드하는 문제 차단
+    const cacheBust = `&_v=${Date.now()}`;
+    const url = `viewer.html?backend=render&project=${encodeURIComponent(projectId)}${tokenQS}${cacheBust}`;
     iframe.src = url;
     newTabLink.href = url;
+  }
+
+  // SC3-3 발주 완료 후 — 방금 발주한 프로젝트로 뷰어 진입
+  function goIFCViewerAfterOrder() {
+    const pid = recoState.projectId || recoState.lastResult?.project_id;
+    if (!pid) {
+      alert('프로젝트 ID를 찾을 수 없습니다. MODE 04에서 직접 선택해주세요.');
+      goIFCViewer();
+      return;
+    }
+    goIFCViewer(pid);
+  }
+
+  /* ══════════════════════════════════════════
+     MODE 05 — BIM 업로드 (브라우저 측 IFC 파싱)
+  ══════════════════════════════════════════ */
+  let _ifcFile = null;        // 사용자가 선택한 File 객체
+  let _webIfcApi = null;      // web-ifc 인스턴스 (재사용)
+
+  function goBIMUpload() {
+    if (!getAuth()?.token) { alert('로그인이 필요합니다.'); goSC41(); return; }
+    document.getElementById('modesel').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc-upload');
+      showHeader(true);
+      setBackFn(() => {
+        document.getElementById('sc-upload').classList.add('hidden');
+        setTimeout(() => { showScreen('modesel'); triggerAnim('#modesel .ms-inner > *'); }, 300);
+      });
+      // 기본값 설정
+      const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+      document.getElementById('up-project-id').value = `P${today.slice(2,8)}`;
+      document.getElementById('up-project-name').value = '';
+      document.getElementById('up-file-info').textContent = '';
+      document.getElementById('up-log').textContent = '대기 중…';
+      document.getElementById('up-go-btn').disabled = true;
+      _ifcFile = null;
+      // 드래그앤드롭 바인딩
+      const dz = document.getElementById('up-drop-zone');
+      dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('dragover'); };
+      dz.ondragleave = () => dz.classList.remove('dragover');
+      dz.ondrop = (e) => {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        if (e.dataTransfer.files?.[0]) handleIFCFileSelect({ target: { files: e.dataTransfer.files } });
+      };
+    }, 300);
+  }
+
+  function handleIFCFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.ifc')) {
+      alert('IFC 파일(.ifc)만 가능합니다.');
+      return;
+    }
+    _ifcFile = file;
+    document.getElementById('up-file-info').textContent =
+      `${file.name}  ·  ${(file.size/1024/1024).toFixed(2)} MB`;
+    document.getElementById('up-go-btn').disabled = false;
+  }
+
+  function uplog(msg, cls) {
+    const log = document.getElementById('up-log');
+    const span = cls ? `<span class="${cls}">${msg}</span>` : msg;
+    log.innerHTML += '\n' + span;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  /* ── 자재 매핑 룰 (브라우저 내장) ──────────────────────
+     IfcReinforcingBar의 직경(mm) → 자재 코드
+     IfcWall의 family/type 패턴 → 자재 코드
+  ─────────────────────────────────────────────────── */
+  const REBAR_DIAMETER_MAP = [
+    { max: 11.0,  code: 'RC-BAR-D10', dia: 'D10' },
+    { max: 14.0,  code: 'RC-BAR-D13', dia: 'D13' },
+    { max: 17.0,  code: 'RC-BAR-D16', dia: 'D16' },
+    { max: 21.0,  code: 'RC-BAR-D19', dia: 'D19' },
+    { max: 24.0,  code: 'RC-BAR-D22', dia: 'D22' },
+    { max: 27.0,  code: 'RC-BAR-D25', dia: 'D25' },
+    { max: 30.0,  code: 'RC-BAR-D29', dia: 'D29' },
+    { max: 999.0, code: 'RC-BAR-D32', dia: 'D32' },
+  ];
+
+  function classifyRebarByDiameter(diameterMm) {
+    if (!diameterMm || diameterMm <= 0) return null;
+    for (const row of REBAR_DIAMETER_MAP) {
+      if (diameterMm <= row.max) return row;
+    }
+    return null;
+  }
+
+  function classifyWallByName(family, type) {
+    const name = `${family || ''} ${type || ''}`.toLowerCase();
+    if (name.match(/brick|벽돌|시멘트벽돌|cement brick/)) return 'MS-BRICK-CMT';
+    if (name.match(/concrete|콘크리트|rc/)) return null;  // RC 벽은 매핑 제외 → wall_unmapped
+    return null;
+  }
+
+  async function loadWebIFC() {
+    if (_webIfcApi) return _webIfcApi;
+    uplog('  · web-ifc WASM 로드 중…');
+    const WebIFC = await import('https://unpkg.com/web-ifc@0.0.50/web-ifc-api.js');
+    const api = new WebIFC.IfcAPI();
+    api.SetWasmPath('https://unpkg.com/web-ifc@0.0.50/');
+    await api.Init();
+    _webIfcApi = api;
+    uplog('  · web-ifc 초기화 OK', 'ok');
+    return api;
+  }
+
+  async function doIFCUpload() {
+    if (!_ifcFile) { alert('IFC 파일을 먼저 선택하세요.'); return; }
+    const projectId   = document.getElementById('up-project-id').value.trim();
+    const projectName = document.getElementById('up-project-name').value.trim() || _ifcFile.name.replace(/\.ifc$/i,'');
+    if (!projectId) { alert('프로젝트 ID를 입력하세요.'); return; }
+
+    const btn = document.getElementById('up-go-btn');
+    const log = document.getElementById('up-log');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ 처리 중…';
+    log.innerHTML = `[${new Date().toLocaleTimeString()}] 시작 — 프로젝트 ${projectId} (${projectName})`;
+
+    try {
+      // ── 1. IFC 파일 읽기 ─────────────────────────────
+      uplog('1. IFC 파일 읽기…');
+      const ifcBytes = new Uint8Array(await _ifcFile.arrayBuffer());
+      uplog(`  · ${(ifcBytes.length/1024/1024).toFixed(2)} MB`, 'ok');
+
+      // ── 2. web-ifc 로드 + 파싱 ──────────────────────
+      uplog('2. IFC 파싱 (web-ifc WASM)…');
+      const ifcApi = await loadWebIFC();
+      const modelID = ifcApi.OpenModel(ifcBytes);
+      uplog(`  · modelID = ${modelID}`, 'ok');
+
+      const WebIFC = await import('https://unpkg.com/web-ifc@0.0.50/web-ifc-api.js');
+
+      // ── 3. 프로젝트·층 정보 ─────────────────────────
+      uplog('3. 프로젝트·층 정보 추출…');
+      const projectLines = ifcApi.GetLineIDsWithType(modelID, WebIFC.IFCPROJECT);
+      let projInfo = { name: projectName, number: '-' };
+      if (projectLines.size() > 0) {
+        const p = ifcApi.GetLine(modelID, projectLines.get(0));
+        projInfo.name = p.Name?.value || projectName;
+        projInfo.number = p.LongName?.value || '-';
+      }
+
+      const storeyLines = ifcApi.GetLineIDsWithType(modelID, WebIFC.IFCBUILDINGSTOREY);
+      const levels = [];
+      for (let i = 0; i < storeyLines.size(); i++) {
+        const s = ifcApi.GetLine(modelID, storeyLines.get(i));
+        levels.push({
+          name: s.Name?.value || `Level ${i+1}`,
+          elevation_mm: Math.round((s.Elevation?.value || 0) * 1000) / 1000,
+          is_building_story: true,
+        });
+      }
+      uplog(`  · 층 ${levels.length}개 추출`, 'ok');
+
+      // ── 4. 부재 추출 — Rebar + Wall ─────────────────
+      uplog('4. 부재 추출…');
+      const elements = [];
+
+      // 4-A. 철근 (IfcReinforcingBar)
+      const rebarLines = ifcApi.GetLineIDsWithType(modelID, WebIFC.IFCREINFORCINGBAR);
+      let rebarMapped = 0;
+      for (let i = 0; i < rebarLines.size(); i++) {
+        const expressId = rebarLines.get(i);
+        const r = ifcApi.GetLine(modelID, expressId);
+        const guid = r.GlobalId?.value;
+        if (!guid) continue;
+        const dia = r.NominalDiameter?.value || r.BarLength?.value;   // mm 추정
+        const cls = classifyRebarByDiameter(dia);
+        if (cls) rebarMapped++;
+        elements.push({
+          element_id: expressId,
+          category: 'rebar',
+          family: r.SteelGrade?.value || 'Rebar',
+          type_name: r.Name?.value || cls?.dia || '-',
+          level: null,
+          material_code: cls?.code || null,
+          raw_quantity: 0,   // IFC만으론 정확한 무게 산출 어려움 — 0 또는 추정값
+          raw_unit: 'kg',
+          spec: {
+            diameter: cls?.dia,
+            diameter_mm: dia,
+            source: 'web-ifc',
+          },
+          ifc_guid: guid,
+        });
+      }
+      uplog(`  · 철근 ${rebarLines.size()}개 (매핑 ${rebarMapped}개)`, 'ok');
+
+      // 4-B. 벽 (IfcWall + IfcWallStandardCase)
+      const wallTypes = [WebIFC.IFCWALL, WebIFC.IFCWALLSTANDARDCASE].filter(t => t !== undefined);
+      let wallTotal = 0, wallMapped = 0;
+      for (const t of wallTypes) {
+        const ws = ifcApi.GetLineIDsWithType(modelID, t);
+        wallTotal += ws.size();
+        for (let i = 0; i < ws.size(); i++) {
+          const expressId = ws.get(i);
+          const w = ifcApi.GetLine(modelID, expressId);
+          const guid = w.GlobalId?.value;
+          if (!guid) continue;
+          const name = w.Name?.value || '';
+          const code = classifyWallByName(name, name);
+          if (code) wallMapped++;
+          elements.push({
+            element_id: expressId,
+            category: code ? 'wall' : 'wall_unmapped',
+            family: name,
+            type_name: w.ObjectType?.value || name,
+            level: null,
+            material_code: code,
+            raw_quantity: 0,
+            raw_unit: 'm2',
+            spec: { source: 'web-ifc' },
+            ifc_guid: guid,
+          });
+        }
+      }
+      uplog(`  · 벽 ${wallTotal}개 (매핑 ${wallMapped}개, 미매핑 ${wallTotal - wallMapped}개)`, 'ok');
+
+      // ── 5. envelope JSON 빌드 ──────────────────────
+      uplog('5. envelope JSON 빌드…');
+      const envelope = {
+        $schema_version: '1.0',
+        exported_at: new Date().toISOString(),
+        exporter: 'delivery_web (browser web-ifc)',
+        project: {
+          project_id: projectId,
+          name: projInfo.name,
+          number: projInfo.number,
+          source_file: _ifcFile.name,
+          level_count: levels.length,
+        },
+        levels,
+        elements,
+        materials: [],            // 시드 데이터는 백엔드에서 가지고 있을 것
+        material_aliases: [],
+        category_mapping_rules: [],
+        vendors: [],
+        vendor_quotes: [],
+        orders: [],
+        order_items: [],
+      };
+      const envBytes = new Blob([JSON.stringify(envelope)]).size;
+      uplog(`  · 부재 총 ${elements.length}개 · envelope ${(envBytes/1024).toFixed(1)} KB`, 'ok');
+
+      // ── 6. envelope JSON 업로드 ────────────────────
+      uplog('6. envelope JSON 업로드…');
+      const summary = `${projInfo.name}: 부재 ${elements.length}개 (rebar ${rebarLines.size()}, wall ${wallTotal})`;
+      const upRes = await apiFetch('/api/revit/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: projectId,
+          project_name: projInfo.name,
+          payload: envelope,
+          summary,
+        }),
+      });
+      if (!upRes.ok) throw new Error('envelope 업로드 실패 HTTP ' + upRes.status);
+      uplog('  · envelope 업로드 OK', 'ok');
+
+      // ── 7. IFC 파일 업로드 (multipart) ─────────────
+      uplog('7. IFC 파일 업로드 (multipart)…');
+      const form = new FormData();
+      form.append('file', _ifcFile, `${projectId}.ifc`);
+      const ifcRes = await apiFetch(`/api/revit/ifc/${encodeURIComponent(projectId)}`, {
+        method: 'POST',
+        body: form,
+      });
+      if (!ifcRes.ok) {
+        uplog(`  · ⚠ IFC 업로드 실패 HTTP ${ifcRes.status} — envelope만 사용 가능`, 'warn');
+      } else {
+        uplog(`  · IFC 업로드 OK (${(ifcBytes.length/1024/1024).toFixed(2)} MB)`, 'ok');
+      }
+
+      // ── 8. web-ifc 메모리 해제 ─────────────────────
+      ifcApi.CloseModel(modelID);
+
+      uplog('─────────────────────────────────', 'ok');
+      uplog(`✓ 완료. 사이트 MODE 02·04 에서 ${projectId} 사용 가능`, 'ok');
+
+      btn.innerHTML = '✓ 업로드 완료 — MODE 02로 이동';
+      btn.onclick = () => { fetchBIMData(); };
+      btn.disabled = false;
+
+    } catch (e) {
+      console.error(e);
+      uplog('✗ 오류: ' + (e.message || e), 'err');
+      btn.innerHTML = '🚀 파싱 후 서버 업로드';
+      btn.disabled = false;
+    }
   }
 
   /* ══════════════════════════════════════════
@@ -2273,7 +3209,7 @@
     selectEl.innerHTML = '<option value="">불러오는 중…</option>';
 
     try {
-      // 1) 서버 상태 확인
+      // 1) 서버 상태 확인 (인증 불필요)
       const rootRes = await fetch(`${RENDER_SERVER_URL}/`);
       if (!rootRes.ok) throw new Error(`서버 응답 오류 ${rootRes.status}`);
       const root = await rootRes.json();
@@ -2285,8 +3221,8 @@
         return;
       }
 
-      // 2) 프로젝트 목록
-      const listRes = await fetch(`${RENDER_SERVER_URL}/api/revit/data`);
+      // 2) 프로젝트 목록 (인증 필요)
+      const listRes = await apiFetch(`/api/revit/data`);
       if (!listRes.ok) throw new Error(`목록 조회 실패 ${listRes.status}`);
       aiProjects = await listRes.json();
 
@@ -2353,7 +3289,7 @@
     const typingEl = appendTyping();
 
     try {
-      const res = await fetch(`${RENDER_SERVER_URL}/api/chat`, {
+      const res = await apiFetch(`/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, project_id: aiCurrentProjectId }),
@@ -2633,7 +3569,7 @@
   async function loadBIMFromServer() {
     try {
       // 1) 프로젝트 목록
-      const listRes = await fetch(`${RENDER_SERVER_URL}/api/revit/data`);
+      const listRes = await apiFetch(`/api/revit/data`);
       if (!listRes.ok) throw new Error('목록 조회 실패: ' + listRes.status);
       const list = await listRes.json();
 
@@ -2648,7 +3584,7 @@
       const projectId = latest.project_id || latest.id;
       if (!projectId) throw new Error('프로젝트 ID 누락 — 응답: ' + JSON.stringify(latest).slice(0, 200));
 
-      const detailRes = await fetch(`${RENDER_SERVER_URL}/api/revit/data/${encodeURIComponent(projectId)}`);
+      const detailRes = await apiFetch(`/api/revit/data/${encodeURIComponent(projectId)}`);
       if (!detailRes.ok) throw new Error('상세 조회 실패: ' + detailRes.status);
       const detail = await detailRes.json();
 
@@ -2674,63 +3610,6 @@
     document.getElementById('sc31-loading').style.display = 'flex';
     document.getElementById('sc31-error').style.display   = 'none';
     loadBIMFromServer();
-  }
-
-  /* ── JSON 파일 직접 읽기 ── */
-  function showJSONUpload() {
-    // 로딩 숨기고 오류 영역(파일 업로드 포함)으로 전환
-    document.getElementById('sc31-loading').style.display = 'none';
-    document.getElementById('sc31-error').style.display   = 'block';
-    document.getElementById('sc31-error-msg').textContent = 'JSON 파일을 선택해주세요';
-  }
-
-  function handleJSONDrop(event) {
-    const file = event.dataTransfer.files[0];
-    if (file) readJSONFile(file);
-  }
-
-  function handleJSONFile(input) {
-    const file = input.files[0];
-    if (file) readJSONFile(file);
-  }
-
-  function readJSONFile(file) {
-    if (!file.name.endsWith('.json')) {
-      alert('JSON 파일만 선택할 수 있습니다.');
-      return;
-    }
-
-    // 로딩 상태로 전환
-    document.getElementById('sc31-error').style.display   = 'none';
-    document.getElementById('sc31-loading').style.display = 'flex';
-    document.querySelector('#sc31-loading p').textContent = `"${file.name}" 읽는 중...`;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const payload = JSON.parse(e.target.result);
-        _bimPayload = payload;
-        renderSC31(payload);
-        // 파일에서 읽었음을 표시
-        const title = document.getElementById('b-projname');
-        if (title) {
-          const badge = document.createElement('span');
-          badge.style.cssText = 'font-size:11px;color:var(--text-muted);font-family:JetBrains Mono,monospace;font-weight:400;margin-left:10px';
-          badge.textContent = '(로컬 파일)';
-          title.appendChild(badge);
-        }
-      } catch (err) {
-        document.getElementById('sc31-loading').style.display = 'none';
-        document.getElementById('sc31-error').style.display   = 'block';
-        document.getElementById('sc31-error-msg').textContent = 'JSON 파싱 오류: ' + err.message;
-      }
-    };
-    reader.onerror = () => {
-      document.getElementById('sc31-loading').style.display = 'none';
-      document.getElementById('sc31-error').style.display   = 'block';
-      document.getElementById('sc31-error-msg').textContent = '파일 읽기 실패';
-    };
-    reader.readAsText(file);
   }
 
   function showBIMError(msg) {
@@ -2860,7 +3739,7 @@
     ));
 
     try {
-      const res = await fetch(`${RENDER_SERVER_URL}/api/projects/${encodeURIComponent(projectId)}/recommend`, {
+      const res = await apiFetch(`/api/projects/${encodeURIComponent(projectId)}/recommend`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ material_codes: codes, priority: recoState.priority }),
@@ -3019,12 +3898,12 @@
     btn.textContent = '발주 처리 중...';
 
     try {
-      const res = await fetch(
-        `${RENDER_SERVER_URL}/api/projects/${encodeURIComponent(recoState.projectId)}/finalize-order`,
+      const res = await apiFetch(
+        `/api/projects/${encodeURIComponent(recoState.projectId)}/finalize-order`,
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ selections, approved_by: '웹 사용자' }),
+          body: JSON.stringify({ selections, approved_by: _currentUser?.name || '웹 사용자' }),
         }
       );
       if (!res.ok) {
@@ -3094,32 +3973,375 @@
   }
 
   /* ══════════════════════════════════════════
-     내장 업체 DB
+     발주서 docx 생성 (클라이언트 측)
+     DeliveryMcp의 generate_purchase_order_docx 디자인을 그대로 포팅
   ══════════════════════════════════════════ */
-  const VENDOR_DB = {
+  let _docxLib = null;
+  async function loadDocxLib() {
+    if (_docxLib) return _docxLib;
+    _docxLib = await import('https://esm.sh/docx@8.5.0');
+    return _docxLib;
+  }
+
+  async function downloadOrderDocx() {
+    if (!recoState.lastResult) {
+      alert('발주 결과가 없습니다.');
+      return;
+    }
+    const result = recoState.lastResult;
+
+    // 로딩 표시
+    const btn = event?.target?.closest('button');
+    const origLabel = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = '발주서 생성 중…'; }
+
+    try {
+      const docx = await loadDocxLib();
+      const {
+        Document, Paragraph, TextRun, Table, TableRow, TableCell,
+        WidthType, AlignmentType, BorderStyle, HeightRule, ShadingType,
+        Packer,
+      } = docx;
+
+      const FONT = '맑은 고딕';
+      const run = (text, opts = {}) => new TextRun({
+        text, font: FONT, size: opts.size ?? 20,
+        bold: opts.bold, color: opts.color,
+      });
+      const para = (text, opts = {}) => new Paragraph({
+        alignment: opts.align,
+        spacing: opts.spacing ? { after: opts.spacing } : undefined,
+        children: [run(text, { bold: opts.bold, size: opts.size, color: opts.color })],
+      });
+      const cell = (content, opts = {}) => new TableCell({
+        width: opts.width ? { size: opts.width, type: WidthType.PERCENTAGE } : undefined,
+        shading: opts.shade ? { type: ShadingType.SOLID, color: opts.shade, fill: opts.shade } : undefined,
+        children: typeof content === 'string'
+          ? [para(content, { bold: opts.bold, align: opts.align })]
+          : content,
+      });
+
+      // 여러 주문 (업체별 그룹화) 각각 별도 docx 파일로
+      for (const order of result.orders) {
+        const orderId    = order.order_id;
+        const orderDate  = order.order_date || new Date().toISOString().slice(0, 10);
+        const status     = order.status || 'Pending';
+        const isDraft    = status !== 'Ordered';
+        const items      = order.items || [];
+        const total      = order.total_amount || items.reduce((s, it) => s + (it.total_price || 0), 0);
+        const tax        = Math.round(total * 0.1);
+        const grand      = total + tax;
+        const approvedBy = order.approved_by || _currentUser?.name || '웹 사용자';
+
+        // 제목
+        const titleParas = [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 160 },
+            children: [new TextRun({ text: '발 주 서', font: FONT, size: 44, bold: true })],
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 320 },
+            children: [new TextRun({
+              text: orderId + (isDraft ? '  (미확정 - 초안)' : ''),
+              font: FONT, size: 18, color: '888888',
+            })],
+          }),
+        ];
+
+        // 발주자/공급업체 정보 표 (2열)
+        const infoTable = new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [new TableRow({
+            children: [
+              cell([
+                para('발주자', { bold: true, size: 16, color: '666666' }),
+                para('배달의 철근 (F5조)', { bold: true, size: 22 }),
+                para('사업자번호: -', { size: 18 }),
+                para('대표자: -', { size: 18 }),
+                para('주소: 경희대학교 국제캠퍼스', { size: 18 }),
+                para('전화: -', { size: 18 }),
+              ], { width: 50 }),
+              cell([
+                para('공급업체', { bold: true, size: 16, color: '666666' }),
+                para(String(order.vendor_name ?? order.vendor_id), { bold: true, size: 22 }),
+                para(`업체ID: ${order.vendor_id ?? '-'}`, { size: 18 }),
+                para(`지역: ${order.vendor_region ?? '-'}`, { size: 18 }),
+                para(`전화: ${order.vendor_phone ?? '-'}`, { size: 18 }),
+                para(`이메일: ${order.vendor_email ?? '-'}`, { size: 18 }),
+              ], { width: 50 }),
+            ],
+          })],
+        });
+
+        // 발주 메타 표
+        const orderMetaTable = new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [
+            new TableRow({ children: [
+              cell('발주번호', { width: 18, bold: true, shade: 'F0F4F8' }),
+              cell(orderId,    { width: 32 }),
+              cell('발주일자', { width: 18, bold: true, shade: 'F0F4F8' }),
+              cell(orderDate,  { width: 32 }),
+            ]}),
+            new TableRow({ children: [
+              cell('프로젝트',  { bold: true, shade: 'F0F4F8' }),
+              cell(String(recoState.projectId ?? '-')),
+              cell('현장 주소', { bold: true, shade: 'F0F4F8' }),
+              cell('-'),
+            ]}),
+            new TableRow({ children: [
+              cell('납품 희망일', { bold: true, shade: 'F0F4F8' }),
+              cell('협의'),
+              cell('확정 납기', { bold: true, shade: 'F0F4F8' }),
+              cell('-'),
+            ]}),
+            new TableRow({ children: [
+              cell('승인자', { bold: true, shade: 'F0F4F8' }),
+              cell(approvedBy),
+              cell('상태',    { bold: true, shade: 'F0F4F8' }),
+              cell(status, { bold: isDraft }),
+            ]}),
+          ],
+        });
+
+        // 품목 표 헤더 (파란 배경 + 흰 글씨)
+        const whiteHeaderRow = new TableRow({
+          children: ['품명','자재코드','수량','단위','단가(원)','금액(원)'].map((label, i) => {
+            const widths = [30, 18, 12, 8, 16, 16];
+            return new TableCell({
+              width: { size: widths[i], type: WidthType.PERCENTAGE },
+              shading: { type: ShadingType.SOLID, color: '1F3864', fill: '1F3864' },
+              children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [new TextRun({ text: label, font: FONT, size: 20, bold: true, color: 'FFFFFF' })],
+              })],
+            });
+          }),
+        });
+
+        const itemRows = items.map((it) => new TableRow({
+          children: [
+            cell(it.description ?? it.material_code, { width: 30 }),
+            cell(it.material_code, { width: 18, align: AlignmentType.CENTER }),
+            cell(Number(it.quantity_ordered || 0).toLocaleString(), { width: 12, align: AlignmentType.RIGHT }),
+            cell(it.unit || 'kg', { width: 8, align: AlignmentType.CENTER }),
+            cell(Number(it.unit_price || 0).toLocaleString(), { width: 16, align: AlignmentType.RIGHT }),
+            cell(Number(it.total_price || 0).toLocaleString(), { width: 16, align: AlignmentType.RIGHT }),
+          ],
+        }));
+
+        const totalRow = (label, amount, bold = false) => new TableRow({
+          children: [
+            new TableCell({
+              children: [new Paragraph({
+                alignment: AlignmentType.RIGHT,
+                children: [run(label, { bold, size: 20 })],
+              })],
+              columnSpan: 5,
+            }),
+            cell(amount.toLocaleString(), {
+              width: 16, bold, align: AlignmentType.RIGHT,
+              shade: bold ? 'D9E1F2' : undefined,
+            }),
+          ],
+        });
+
+        const itemsTable = new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [
+            whiteHeaderRow,
+            ...itemRows,
+            totalRow('공급가액',    Math.round(total)),
+            totalRow('부가세 (10%)', tax),
+            totalRow('합   계',     Math.round(grand), true),
+          ],
+        });
+
+        // 비고
+        const noteParas = [];
+        if (order.note) {
+          noteParas.push(new Paragraph({
+            spacing: { before: 240 },
+            children: [run('비고: ' + order.note, { size: 18, color: '555555' })],
+          }));
+        }
+
+        // 서명란
+        const signCell = (label) => new TableCell({
+          width: { size: 50, type: WidthType.PERCENTAGE },
+          borders: {
+            top:    { style: BorderStyle.SINGLE, size: 12, color: '1F3864' },
+            left:   { style: BorderStyle.NONE,   size: 0,  color: 'FFFFFF' },
+            right:  { style: BorderStyle.NONE,   size: 0,  color: 'FFFFFF' },
+            bottom: { style: BorderStyle.NONE,   size: 0,  color: 'FFFFFF' },
+          },
+          children: [new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 200 },
+            children: [run(label, { size: 20, color: '555555' })],
+          })],
+        });
+        const signTable = new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [new TableRow({ children: [signCell('발주자 (인)'), signCell('승인자 (인)')] })],
+        });
+
+        // 문서 조립
+        const doc = new Document({
+          styles: { default: { document: { run: { font: FONT } } } },
+          sections: [{
+            properties: { page: { margin: { top: 1000, bottom: 1000, left: 1200, right: 1200 } } },
+            children: [
+              ...titleParas,
+              infoTable,
+              new Paragraph({ children: [run('', {})], spacing: { after: 240 } }),
+              orderMetaTable,
+              new Paragraph({ children: [run('', {})], spacing: { after: 240 } }),
+              itemsTable,
+              ...noteParas,
+              new Paragraph({ children: [run('', {})], spacing: { after: 600 } }),
+              signTable,
+            ],
+          }],
+        });
+
+        // 다운로드
+        const blob = await Packer.toBlob(doc);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `발주서_${orderId}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+
+        // 여러 주문 시 너무 빠르게 다운로드가 겹치지 않도록 살짝 대기
+        if (result.orders.length > 1) await new Promise(r => setTimeout(r, 400));
+      }
+    } catch (e) {
+      console.error('발주서 생성 실패:', e);
+      alert('발주서 생성 실패: ' + e.message);
+    } finally {
+      if (btn && origLabel) { btn.disabled = false; btn.innerHTML = origLabel; }
+    }
+  }
+
+
+  /* ══════════════════════════════════════════
+     백엔드 연결 - 18개 업체 동기화
+     - 기본: 백엔드 https://revit-llm-backend.onrender.com 에서 가져옴
+     - fallback: 기본 데이터 (백엔드 실패 시 시연 안전 보장)
+  ══════════════════════════════════════════ */
+  
+  /* fallback 데이터 (백엔드 실패 시) */
+  const VENDOR_DB_FALLBACK = {
     rebar: [
-      { id:1, name:'수원철강(주)',   type:'유통·가공', addr:'수원시 권선구 산업로 156',      tel:'031-291-XXXX', lat:37.244, lng:127.013, price:1035000, rating:4.3 },
-      { id:2, name:'경기스틸(주)',   type:'유통',       addr:'수원시 장안구 정조로 1000',     tel:'031-244-XXXX', lat:37.291, lng:127.010, price:1030000, rating:4.0 },
-      { id:3, name:'(주)한성철강',  type:'유통·가공', addr:'수원시 팔달구 효원로 300',      tel:'031-222-XXXX', lat:37.264, lng:127.031, price:1040000, rating:4.5 },
-      { id:4, name:'동원철강(주)',   type:'가공센터',   addr:'용인시 기흥구 산업단지로 55',  tel:'031-284-XXXX', lat:37.268, lng:127.118, price:1025000, rating:3.8 },
-      { id:5, name:'(주)용인스틸',  type:'유통',       addr:'용인시 처인구 중부대로 1500',  tel:'031-332-XXXX', lat:37.233, lng:127.202, price:1033000, rating:4.1 },
-      { id:6, name:'기흥철강(주)',   type:'유통·가공', addr:'용인시 기흥구 흥덕1로 100',    tel:'031-281-XXXX', lat:37.280, lng:127.114, price:1027000, rating:4.2 },
-      { id:7, name:'수지스틸(주)',   type:'유통',       addr:'용인시 수지구 풍덕천로 200',   tel:'031-265-XXXX', lat:37.320, lng:127.096, price:1037000, rating:3.9 },
-      { id:8, name:'(주)광교철강',  type:'유통·가공', addr:'수원시 영통구 광교중앙로 148', tel:'031-216-XXXX', lat:37.285, lng:127.045, price:1045000, rating:4.0 },
-      { id:9, name:'화성철강(주)',   type:'유통',       addr:'화성시 동탄산단1로 50',        tel:'031-374-XXXX', lat:37.203, lng:127.072, price:1022000, rating:3.7 },
-      { id:10,name:'(주)경인스틸',  type:'대리점',     addr:'수원시 권선구 권선로 900',      tel:'031-293-XXXX', lat:37.252, lng:127.024, price:1043000, rating:4.4 },
+      { id:1, name:'수원철강(주)',   type:'유통·가공', addr:'수원시 권선구 산업로 156',      tel:'031-291-XXXX', lat:37.2614, lng:126.9821, price:1035000, rating:4.3 },
+      { id:2, name:'경기스틸(주)',   type:'유통',       addr:'수원시 장안구 정조로 1000',     tel:'031-244-XXXX', lat:37.3010, lng:127.0099, price:1030000, rating:4.1 },
+      { id:3, name:'(주)한성철강',  type:'유통·가공', addr:'수원시 팔달구 효원로 300',      tel:'031-222-XXXX', lat:37.2806, lng:127.0144, price:1040000, rating:4.5 },
+      { id:4, name:'동원철강(주)',   type:'가공센터',   addr:'용인시 기흥구 산업단지로 55',  tel:'031-284-XXXX', lat:37.2517, lng:127.1156, price:1025000, rating:4.6 },
+      { id:5, name:'(주)용인스틸',  type:'유통',       addr:'용인시 처인구 중부대로 1500',  tel:'031-332-XXXX', lat:37.2342, lng:127.2014, price:1033000, rating:4.0 },
+      { id:6, name:'기흥철강(주)',   type:'유통·가공', addr:'용인시 기흥구 흥덕1로 100',    tel:'031-281-XXXX', lat:37.2735, lng:127.1167, price:1027000, rating:4.4 },
+      { id:7, name:'수지스틸(주)',   type:'유통',       addr:'용인시 수지구 풍덕천로 200',   tel:'031-265-XXXX', lat:37.3219, lng:127.0938, price:1037000, rating:4.2 },
+      { id:8, name:'(주)광교철강',  type:'유통·가공', addr:'수원시 영통구 광교중앙로 148', tel:'031-216-XXXX', lat:37.2871, lng:127.0586, price:1045000, rating:4.7 },
+      { id:9, name:'화성철강(주)',   type:'유통',       addr:'화성시 동탄산단1로 50',        tel:'031-374-XXXX', lat:37.2056, lng:127.0726, price:1022000, rating:4.3 },
+      { id:10,name:'(주)경인스틸',  type:'대리점',     addr:'수원시 권선구 권선로 900',      tel:'031-293-XXXX', lat:37.2589, lng:126.9745, price:1043000, rating:4.5 },
     ],
     masonry: [
-      { id:11, name:'수원건자재(주)', type:'도매',       addr:'수원시 권선구 권선로 850',      tel:'031-296-XXXX', lat:37.248, lng:127.020, price:85, rating:4.2 },
-      { id:12, name:'(주)경기조적',  type:'도매·시공', addr:'수원시 장안구 정자로 200',      tel:'031-241-XXXX', lat:37.292, lng:127.011, price:80, rating:4.4 },
-      { id:13, name:'용인건재(주)',   type:'도매',       addr:'용인시 기흥구 산업단지로 88',  tel:'031-286-XXXX', lat:37.270, lng:127.115, price:78, rating:4.0 },
-      { id:14, name:'(주)한일벽돌',  type:'제조·판매', addr:'용인시 처인구 백암면 백봉로 300', tel:'031-333-XXXX', lat:37.128, lng:127.390, price:72, rating:3.8 },
-      { id:15, name:'광교건자재(주)', type:'도매',       addr:'수원시 영통구 광교중앙로 80',  tel:'031-218-XXXX', lat:37.284, lng:127.046, price:88, rating:4.5 },
-      { id:16, name:'(주)동탄자재',  type:'도매',       addr:'화성시 동탄대로 900',           tel:'031-376-XXXX', lat:37.200, lng:127.072, price:75, rating:3.9 },
-      { id:17, name:'기흥건재(주)',   type:'도매·시공', addr:'용인시 기흥구 흥덕2로 55',     tel:'031-283-XXXX', lat:37.278, lng:127.112, price:82, rating:4.1 },
-      { id:18, name:'(주)수지자재',  type:'도매',       addr:'용인시 수지구 신봉2로 100',    tel:'031-262-XXXX', lat:37.321, lng:127.093, price:86, rating:4.3 },
+      { id:11, name:'수원건자재(주)', type:'도매',       addr:'수원시 권선구 권선로 850',      tel:'031-296-XXXX', lat:37.2597, lng:126.9788, price:85, rating:4.2 },
+      { id:12, name:'(주)경기조적',  type:'도매·시공', addr:'수원시 장안구 정자로 200',      tel:'031-241-XXXX', lat:37.3057, lng:127.0125, price:80, rating:4.6 },
+      { id:13, name:'용인건재(주)',   type:'도매',       addr:'용인시 기흥구 산업단지로 88',  tel:'031-286-XXXX', lat:37.2545, lng:127.1187, price:78, rating:4.5 },
+      { id:14, name:'(주)한일벽돌',  type:'제조·판매', addr:'용인시 처인구 백암면 백봉로 300', tel:'031-333-XXXX', lat:37.1465, lng:127.3211, price:72, rating:4.8 },
+      { id:15, name:'광교건자재(주)', type:'도매',       addr:'수원시 영통구 광교중앙로 80',  tel:'031-218-XXXX', lat:37.2856, lng:127.0593, price:88, rating:4.3 },
+      { id:16, name:'(주)동탄자재',  type:'도매',       addr:'화성시 동탄대로 900',           tel:'031-376-XXXX', lat:37.2018, lng:127.0789, price:75, rating:4.4 },
+      { id:17, name:'기흥건재(주)',   type:'도매·시공', addr:'용인시 기흥구 흥덕2로 55',     tel:'031-283-XXXX', lat:37.2756, lng:127.1198, price:82, rating:4.5 },
+      { id:18, name:'(주)수지자재',  type:'도매',       addr:'용인시 수지구 신봉2로 100',    tel:'031-262-XXXX', lat:37.3286, lng:127.1009, price:86, rating:4.1 },
     ]
   };
+  
+  /* 백엔드 동기화될 메인 VENDOR_DB - 초기에는 fallback과 동일 */
+  let VENDOR_DB = JSON.parse(JSON.stringify(VENDOR_DB_FALLBACK));
+  
+  /* 백엔드에서 업체 데이터 가져오기 */
+  async function loadVendorsFromBackend() {
+    try {
+      console.log('📡 백엔드에서 18개 업체 데이터 동기화 시작...');
+      
+      // 철근/조적조 동시 호출 (병렬)
+      const [rebarRes, masonryRes] = await Promise.all([
+        fetch(`${RENDER_SERVER_URL}/api/vendors?material_type=rebar`),
+        fetch(`${RENDER_SERVER_URL}/api/vendors?material_type=masonry`)
+      ]);
+      
+      if (!rebarRes.ok || !masonryRes.ok) {
+        throw new Error('백엔드 응답 오류');
+      }
+      
+      const rebarBackend = await rebarRes.json();
+      const masonryBackend = await masonryRes.json();
+      
+      // 백엔드 응답을 웹사이트 형식으로 변환
+      // (백엔드: name, address, phone / 웹사이트: name, addr, tel)
+      VENDOR_DB.rebar = rebarBackend.map(v => {
+        // fallback에서 같은 id의 price 가져오기 (백엔드엔 price 필드 없음)
+        const fallback = VENDOR_DB_FALLBACK.rebar.find(f => f.id === v.id);
+        return {
+          id: v.id,
+          name: v.name,
+          type: v.type,
+          addr: v.address,         // address → addr
+          tel: v.phone,            // phone → tel
+          lat: v.lat,
+          lng: v.lng,
+          price: fallback ? fallback.price : 1030000,  // 가격 매핑
+          rating: v.rating,
+        };
+      });
+      
+      VENDOR_DB.masonry = masonryBackend.map(v => {
+        const fallback = VENDOR_DB_FALLBACK.masonry.find(f => f.id === v.id);
+        return {
+          id: v.id,
+          name: v.name,
+          type: v.type,
+          addr: v.address,
+          tel: v.phone,
+          lat: v.lat,
+          lng: v.lng,
+          price: fallback ? fallback.price : 80,
+          rating: v.rating,
+        };
+      });
+      
+      console.log(`✅ 백엔드 동기화 완료: 철근 ${VENDOR_DB.rebar.length}개, 조적조 ${VENDOR_DB.masonry.length}개`);
+      
+      // 동기화 상태 표시 (디버그용)
+      window._vendorDbSyncStatus = {
+        synced: true,
+        rebar_count: VENDOR_DB.rebar.length,
+        masonry_count: VENDOR_DB.masonry.length,
+        timestamp: new Date().toISOString()
+      };
+      
+    } catch (err) {
+      console.warn('⚠️ 백엔드 동기화 실패, fallback 데이터 사용:', err.message);
+      window._vendorDbSyncStatus = {
+        synced: false,
+        error: err.message,
+        timestamp: new Date().toISOString()
+      };
+      // VENDOR_DB는 이미 fallback과 동일하므로 그대로 사용
+    }
+  }
+  
+  /* 페이지 로드 시 즉시 백엔드 동기화 시작 */
+  (function initVendorDb() {
+    // 비동기로 시작 (페이지 로딩 안 막음)
+    loadVendorsFromBackend();
+  })();
+
 
   /* ══════════════════════════════════════════
      간이 지오코딩 (Kakao API 연동 전 임시)
@@ -3382,11 +4604,42 @@
       + String(now.getMonth()+1).padStart(2,'0')
       + String(now.getDate()).padStart(2,'0');
 
-    document.getElementById('order-num-display').textContent = baseNo + '-' + String(Math.floor(Math.random()*9000)+1000);
+    const orderDisplayNo = baseNo + '-' + String(Math.floor(Math.random()*9000)+1000);
+    document.getElementById('order-num-display').textContent = orderDisplayNo;
 
     const projName = document.getElementById('proj-name').value || '—';
     const projAddr = document.getElementById('proj-addr').value || '—';
     const projDate = document.getElementById('proj-date').value || '—';
+    const buyerEmail = _currentUser?.email || 'guest@baedalcheolgeun.kr';
+    const buyerName  = _currentUser?.name  || '게스트';
+
+    // 렌더 서버에 발주 전송
+    _selectedVendors.forEach((sv, idx) => {
+      const orderNo = baseNo + '-' + String(1000 + idx + 1);
+      const qty     = sv.qty || (sv.matType === 'rebar' ? 10 : 1000);
+      const total   = sv.price * qty;
+      fetch(`${RENDER_SERVER_URL}/api/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_no:      orderNo,
+          buyer_email:   buyerEmail,
+          buyer_name:    buyerName,
+          vendor_email:  sv.email || sv.name + '@vendor.kr',
+          vendor_name:   sv.name,
+          mat_type:      sv.matType,
+          spec:          sv.spec || '',
+          qty:           qty,
+          unit:          sv.unit || (sv.matType === 'rebar' ? 'ton' : '장'),
+          unit_price:    sv.price,
+          total_price:   total,
+          site_name:     projName,
+          site_addr:     projAddr,
+          delivery_date: projDate,
+        })
+      }).then(r => r.ok && console.log('[발주 전송 완료]', orderNo))
+        .catch(() => console.warn('[발주 서버 전송 실패 - 로컬 처리]'));
+    });
 
     const container = document.getElementById('invoices-container');
     container.innerHTML = '';
@@ -3493,6 +4746,278 @@
   /* ══════════════════════════════════════════
      로그인 / 회원가입
   ══════════════════════════════════════════ */
+  /* ══════════════════════════════════════════
+     SC5 — 판매자 파트
+  ══════════════════════════════════════════ */
+  let _currentVendor = null;
+
+  function goSC51() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    showHeader(false);
+    showScreen('sc5-1');
+  }
+
+  /* ── 로그인 역할 선택 ── */
+  function goSC40() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    showHeader(false);
+    showScreen('sc4-0');
+  }
+
+  function goBackFromSC40() {
+    document.getElementById('sc4-0').classList.add('hidden');
+    setTimeout(() => showScreen('splash'), 300);
+  }
+  function goSC52() {
+    document.getElementById('sc5-1').classList.add('hidden');
+    setTimeout(() => showScreen('sc5-2'), 300);
+  }
+  function goBackFromVendor() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    showHeader(false);
+    setTimeout(() => showScreen('sc4-0'), 300);
+  }
+  function doVendorLogin() {
+    const email = document.getElementById('v-email').value.trim();
+    const pw    = document.getElementById('v-pw').value;
+    if (!email || !pw) {
+      const e = document.getElementById('vendor-login-error');
+      e.textContent = '⚠️ 이메일과 비밀번호를 입력해주세요.';
+      e.style.display = 'block'; return;
+    }
+    const errDiv = document.getElementById('vendor-login-error');
+    errDiv.textContent = '⚠️ 회원 정보가 없습니다. 판매자 등록을 먼저 해주세요.';
+    errDiv.style.display = 'block';
+    document.getElementById('v-email').style.borderColor = '#FECACA';
+    document.getElementById('v-pw').style.borderColor    = '#FECACA';
+  }
+
+  function doVendorSignup() {
+    const company = document.getElementById('v-company').value.trim();
+    const email   = document.getElementById('vs-email').value.trim();
+    const pw      = document.getElementById('vs-pw').value;
+    const pw2     = document.getElementById('vs-pw2').value;
+    if (!company || !email || !pw) { alert('필수 항목(*)을 모두 입력해주세요.'); return; }
+    if (pw !== pw2) { alert('비밀번호가 일치하지 않습니다.'); return; }
+    if (pw.length < 8) { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
+    _currentVendor = {
+      company, email,
+      addr:         document.getElementById('v-addr').value,
+      tel:          document.getElementById('v-tel').value,
+      bizno:        document.getElementById('v-bizno').value,
+      rebar_price:  document.getElementById('v-price-rebar').value,
+      mas_price:    document.getElementById('v-price-masonry').value,
+      rebar_stock:  document.getElementById('v-stock-rebar').value,
+      mas_stock:    document.getElementById('v-stock-masonry').value,
+    };
+    // 서버에 프로필 저장 시도
+    fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(email)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        company, addr: _currentVendor.addr, tel: _currentVendor.tel,
+        bizno: _currentVendor.bizno,
+        rebar_price: parseFloat(_currentVendor.rebar_price) || null,
+        mas_price:   parseFloat(_currentVendor.mas_price)   || null,
+        rebar_stock: parseFloat(_currentVendor.rebar_stock) || null,
+        mas_stock:   parseFloat(_currentVendor.mas_stock)   || null,
+      })
+    }).catch(() => {}); // 실패해도 계속
+    alert('판매자 등록이 완료되었습니다!');
+    document.getElementById('sc5-2').classList.add('hidden');
+    setTimeout(() => afterVendorLogin(), 300);
+  }
+
+  /* ══════════════════════════════════════════
+     판매자 대시보드 — 로그인 후 진입
+  ══════════════════════════════════════════ */
+  let _orderPollTimer = null;
+
+  function afterVendorLogin() {
+    const name = _currentVendor.company || _currentVendor.email.split('@')[0];
+    document.getElementById('v-dashboard-title').textContent = name + ' 님, 안녕하세요 👋';
+    document.getElementById('v-dashboard-sub').textContent   = '발주 요청을 확인하고 제품 정보를 관리하세요';
+
+    // 업체 정보 탭 기존 값 채우기
+    const fill = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+    fill('ei-company', _currentVendor.company);
+    fill('ei-bizno',   _currentVendor.bizno);
+    fill('ei-tel',     _currentVendor.tel);
+    fill('ei-addr',    _currentVendor.addr);
+    fill('u-rebar-price',  _currentVendor.rebar_price);
+    fill('u-rebar-stock',  _currentVendor.rebar_stock);
+    fill('u-mas-price',    _currentVendor.mas_price);
+    fill('u-mas-stock',    _currentVendor.mas_stock);
+
+    showScreen('sc5-3');
+    showHeader(true);
+    document.getElementById('back-btn').style.display = 'flex';
+    setBackFn(() => {
+      stopOrderPolling();
+      goBackFromVendor();
+    });
+    triggerAnim('#sc5-3 .sc5-inner > *');
+
+    // 발주 목록 로드 + 30초 폴링 시작
+    refreshOrders();
+    stopOrderPolling();
+    _orderPollTimer = setInterval(refreshOrders, 30000);
+  }
+
+  function stopOrderPolling() {
+    if (_orderPollTimer) { clearInterval(_orderPollTimer); _orderPollTimer = null; }
+  }
+
+  /* ── 탭 전환 ── */
+  function switchVendorTab(tab) {
+    ['orders','products','info'].forEach(t => {
+      document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+      document.getElementById('panel-'+t).style.display = t === tab ? 'block' : 'none';
+    });
+  }
+
+  /* ── 발주 목록 불러오기 ── */
+  async function refreshOrders() {
+    const loadEl  = document.getElementById('orders-loading');
+    const listEl  = document.getElementById('orders-list');
+    const emptyEl = document.getElementById('orders-empty');
+    loadEl.style.display = 'block';
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'none';
+
+    try {
+      const email = _currentVendor?.email;
+      const res = await fetch(`${RENDER_SERVER_URL}/api/orders?vendor_email=${encodeURIComponent(email)}`);
+      if (!res.ok) throw new Error('서버 오류');
+      const orders = await res.json();
+      loadEl.style.display = 'none';
+      renderOrderList(orders);
+    } catch {
+      loadEl.style.display = 'none';
+      // 데모 데이터
+      renderOrderList([]);
+    }
+  }
+
+  function renderOrderList(orders) {
+    const listEl  = document.getElementById('orders-list');
+    const emptyEl = document.getElementById('orders-empty');
+    const badge   = document.getElementById('v-order-badge');
+
+    if (!orders || orders.length === 0) {
+      emptyEl.style.display = 'block'; badge.style.display = 'none'; return;
+    }
+
+    const pending = orders.filter(o => o.status === 'pending').length;
+    badge.textContent  = pending > 0 ? `신규 ${pending}건` : `총 ${orders.length}건`;
+    badge.style.display = 'inline';
+
+    const STATUS_MAP = {
+      pending:    { label: '신규',    cls: 'badge-new'  },
+      accepted:   { label: '수락됨',  cls: 'badge-done' },
+      rejected:   { label: '거절됨',  cls: 'badge-wait' },
+      delivering: { label: '배송중',  cls: 'badge-wait' },
+      delivered:  { label: '납품완료', cls: 'badge-done' },
+    };
+    const MAT = { rebar: '🔩 철근', masonry: '🧱 조적조' };
+
+    orders.forEach(order => {
+      const s    = STATUS_MAP[order.status] || { label: order.status, cls: 'badge-wait' };
+      const card = document.createElement('div');
+      card.className = `order-req-card${order.status === 'pending' ? ' new' : ''}`;
+      card.dataset.orderId = order.id;
+      card.innerHTML = `
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <span class="order-req-badge ${s.cls}">${s.label}</span>
+            <span style="font-size:14px;font-weight:700">${order.site_name || '현장명 없음'}</span>
+            <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-left:auto">${order.order_no || ''}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:10px">
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">자재</p><p style="font-size:13px;font-weight:600">${MAT[order.mat_type] || order.mat_type} ${order.spec || ''}</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">수량</p><p style="font-size:13px;font-weight:600">${order.qty?.toLocaleString()} ${order.unit}</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">단가</p><p style="font-size:13px;font-weight:600">${order.unit_price?.toLocaleString()}원</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">총액</p><p style="font-size:13px;font-weight:600;color:var(--orange)">${order.total_price?.toLocaleString()}원</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">현장주소</p><p style="font-size:12px">${order.site_addr || '—'}</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">희망납기</p><p style="font-size:12px">${order.delivery_date || '—'}</p></div>
+            <div><p style="font-size:10px;color:var(--text-muted);margin-bottom:2px">구매자</p><p style="font-size:12px">${order.buyer_name || order.buyer_email || '—'}</p></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;margin-top:4px">
+          ${order.status === 'pending' ? `
+            <button class="req-accept-btn" onclick="updateOrderStatus('${order.id}','accepted',this)">✓ 수락</button>
+            <button class="req-reject-btn" onclick="updateOrderStatus('${order.id}','rejected',this)">✕ 거절</button>
+          ` : order.status === 'accepted' ? `
+            <select onchange="updateOrderStatus('${order.id}',this.value,this)" style="padding:8px 10px;background:var(--steel-3);border:1px solid var(--border);border-radius:7px;font-size:12px;color:var(--text-primary);cursor:pointer;min-width:100px">
+              <option value="accepted">수락됨</option>
+              <option value="delivering">배송중</option>
+              <option value="delivered">납품완료</option>
+            </select>
+          ` : `<span class="order-req-badge ${s.cls}" style="padding:8px 14px">${s.label}</span>`}
+        </div>`;
+      listEl.appendChild(card);
+    });
+  }
+
+  async function updateOrderStatus(orderId, status, el) {
+    try {
+      const res = await fetch(`${RENDER_SERVER_URL}/api/orders/${orderId}/status?status=${status}`, {
+        method: 'PUT'
+      });
+      if (!res.ok) throw new Error();
+      refreshOrders(); // 새로고침
+    } catch {
+      alert('상태 업데이트에 실패했습니다. 다시 시도해주세요.');
+    }
+  }
+
+  /* ── 제품 저장 ── */
+  async function saveProduct(type) {
+    const isR    = type === 'rebar';
+    const key    = isR ? 'rebar' : 'mas';
+    const price  = parseFloat(document.getElementById(`u-${key}-price`).value) || null;
+    const stock  = parseFloat(document.getElementById(`u-${key}-stock`).value) || null;
+    const days   = document.getElementById(`u-${key}-days`).value || null;
+    const spec   = document.getElementById(`u-${key}-spec`).value || null;
+
+    const body = isR
+      ? { rebar_price: price, rebar_stock: stock, rebar_days: days, rebar_spec: spec }
+      : { mas_price: price,   mas_stock: stock,   mas_days: days,   mas_spec: spec   };
+
+    try {
+      await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(_currentVendor?.email)}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+    } catch {}
+
+    const statusEl = document.getElementById(`${isR ? 'rebar' : 'masonry'}-save-status`);
+    statusEl.style.display = 'inline';
+    setTimeout(() => statusEl.style.display = 'none', 2500);
+  }
+
+  /* ── 업체 정보 저장 ── */
+  async function saveVendorInfo() {
+    const body = {
+      company: document.getElementById('ei-company').value,
+      bizno:   document.getElementById('ei-bizno').value,
+      tel:     document.getElementById('ei-tel').value,
+      addr:    document.getElementById('ei-addr').value,
+      desc:    document.getElementById('ei-desc').value,
+    };
+    if (_currentVendor) Object.assign(_currentVendor, body);
+
+    try {
+      await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(_currentVendor?.email)}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+    } catch {}
+
+    const statusEl = document.getElementById('info-save-status');
+    statusEl.style.display = 'inline';
+    setTimeout(() => statusEl.style.display = 'none', 2500);
+    document.getElementById('v-dashboard-title').textContent = (body.company || _currentVendor?.email) + ' 님, 안녕하세요 👋';
+  }
+
   let _currentUser = null;
 
   function goSC41() {
@@ -3506,17 +5031,36 @@
     setTimeout(() => showScreen('sc4-2'), 300);
   }
 
+  function clearLoginError() {
+    const errDiv = document.getElementById('login-error');
+    if (errDiv) errDiv.style.display = 'none';
+    const e = document.getElementById('l-email');
+    const p = document.getElementById('l-pw');
+    if (e) e.style.borderColor = '';
+    if (p) p.style.borderColor = '';
+  }
+
+  function clearVendorLoginError() {
+    const errDiv = document.getElementById('vendor-login-error');
+    if (errDiv) errDiv.style.display = 'none';
+    const e = document.getElementById('v-email');
+    const p = document.getElementById('v-pw');
+    if (e) e.style.borderColor = '';
+    if (p) p.style.borderColor = '';
+  }
+
   function goBackFromLogin() {
     document.getElementById('sc4-1').classList.add('hidden');
-    showHeader(false);
-    setTimeout(() => showScreen('splash'), 300);
+    setTimeout(() => showScreen('sc4-0'), 300);
   }
 
   async function doLogin() {
     const email = document.getElementById('l-email').value.trim();
     const pw    = document.getElementById('l-pw').value;
     if (!email || !pw) { alert('이메일과 비밀번호를 입력해주세요.'); return; }
-    
+    const btn = document.querySelector('#sc4-1 .submit-btn');
+    const origLabel = btn.innerHTML;
+    btn.innerHTML = '로그인 중…'; btn.disabled = true;
     try {
       const res = await fetch(`${RENDER_SERVER_URL}/api/auth/login`, {
         method: 'POST',
@@ -3524,16 +5068,42 @@
         body: JSON.stringify({ email, password: pw })
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || '로그인 실패');
+        const errText = res.status === 401 ? '이메일 또는 비밀번호가 올바르지 않습니다.'
+                     : `로그인 실패 (HTTP ${res.status})`;
+        throw new Error(errText);
       }
       const data = await res.json();
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('auth_user', JSON.stringify(data));
-      _currentUser = { name: data.name || email.split('@')[0], email: data.email };
+      if (!data.token) throw new Error('서버 응답에 토큰이 없습니다.');
+      setAuth({
+        token: data.token,
+        user_id: data.user_id,
+        email: data.email || email,
+        name: data.name || (data.email || email).split('@')[0]
+      });
+      _currentUser = getAuth();
+      document.getElementById('l-pw').value = '';
+      // 로컬 MCP 토큰 브리지에도 자동 동기화 (실패해도 사이트는 계속 동작)
+      const bridge = await syncTokenToBridge(_currentUser);
+      if (bridge.synced) console.log('[bridge] 토큰 자동 동기화 성공:', bridge.user);
+      else console.log('[bridge] 자동 동기화 안 됨:', bridge.reason);
       afterLogin();
-    } catch (err) {
-      alert('❌ 로그인 실패: ' + err.message);
+    } catch (e) {
+      const errDiv = document.getElementById('login-error');
+      if (errDiv) {
+        const msg = e.message || '로그인에 실패했습니다.';
+        errDiv.textContent = '⚠️ ' + (
+          (e.message && (e.message.includes('401') || e.message.includes('올바르지')))
+            ? '회원 정보가 없습니다. 이메일 또는 비밀번호를 확인해주세요.'
+            : (e.message && e.message.includes('fetch'))
+            ? '서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'
+            : msg
+        );
+        errDiv.style.display = 'block';
+        document.getElementById('l-email').style.borderColor = '#FECACA';
+        document.getElementById('l-pw').style.borderColor    = '#FECACA';
+      }
+    } finally {
+      btn.innerHTML = origLabel; btn.disabled = false;
     }
   }
 
@@ -3545,8 +5115,10 @@
     const pw2   = document.getElementById('s-pw2').value;
     if (!name || !email || !pw) { alert('필수 항목(*)을 모두 입력해주세요.'); return; }
     if (pw !== pw2)             { alert('비밀번호가 일치하지 않습니다.'); return; }
-    if (pw.length < 8)         { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
-    
+    if (pw.length < 8)          { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
+    const btn = document.querySelector('#sc4-2 .submit-btn');
+    const origLabel = btn.innerHTML;
+    btn.innerHTML = '가입 중…'; btn.disabled = true;
     try {
       const res = await fetch(`${RENDER_SERVER_URL}/api/auth/signup`, {
         method: 'POST',
@@ -3554,30 +5126,58 @@
         body: JSON.stringify({ email, password: pw, name, company: org })
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || '회원가입 실패');
+        let msg = `회원가입 실패 (HTTP ${res.status})`;
+        try { const j = await res.json(); if (j.detail) msg = String(j.detail); } catch {}
+        throw new Error(msg);
       }
       const data = await res.json();
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('auth_user', JSON.stringify(data));
-      _currentUser = { name: data.name || name, email: data.email };
-      
-      alert('✅ 회원가입 완료! 자동 로그인됩니다.');
+      if (data.token) {
+        // 백엔드가 가입 직후 토큰을 발급하면 바로 로그인 처리
+        setAuth({
+          token: data.token,
+          user_id: data.user_id,
+          email: data.email || email,
+          name: data.name || name
+        });
+        _currentUser = getAuth();
+        ['s-name','s-org','s-email','s-pw','s-pw2'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        await syncTokenToBridge(_currentUser);   // 로컬 MCP 브리지 자동 동기화
+        afterLogin();
+        return;
+      }
+      // 토큰 미발급 시 기존 흐름 (수동 로그인)
+      alert('회원가입이 완료되었습니다!\n이메일과 비밀번호로 로그인해주세요.');
       ['s-name','s-org','s-email','s-pw','s-pw2'].forEach(id => {
         document.getElementById(id).value = '';
       });
+      document.getElementById('l-email').value = email;
       document.getElementById('sc4-2').classList.add('hidden');
-      afterLogin();
-    } catch (err) {
-      alert('❌ 회원가입 실패: ' + err.message);
+      setTimeout(() => showScreen('sc4-1'), 300);
+    } catch (e) {
+      alert(e.message || '회원가입에 실패했습니다.');
+    } finally {
+      btn.innerHTML = origLabel; btn.disabled = false;
     }
+  }
+
+  async function logout() {
+    if (!confirm('로그아웃 하시겠습니까?')) return;
+    await clearTokenOnBridge();   // MCP 브리지에서도 토큰 제거 (있다면)
+    clearAuth();
+    _currentUser = null;
+    const badge = document.getElementById('user-badge');
+    if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
+    goSplash();
   }
 
   function afterLogin() {
     const badge = document.getElementById('user-badge');
-    if (badge) { badge.textContent = '👤 ' + _currentUser.name; badge.style.display = 'inline'; }
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) { logoutBtn.style.display = 'inline-block'; }
+    if (badge && _currentUser) {
+      badge.innerHTML = `👤 ${_currentUser.name} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
+      badge.style.display = 'inline';
+    }
     document.getElementById('sc4-1').classList.add('hidden');
     document.getElementById('sc4-2').classList.add('hidden');
     setTimeout(() => {
@@ -3587,92 +5187,22 @@
     }, 300);
   }
 
- function doLogout() {
-    if (!confirm('로그아웃 하시겠습니까?')) return;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    window.location.href = window.location.pathname;
-  }
-    
-    // ── 채팅/AI 관련 모든 localStorage 키 삭제 ──
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (
-            key.toLowerCase().includes('chat') || 
-            key.toLowerCase().includes('ai') || 
-            key.toLowerCase().includes('message') ||
-            key.toLowerCase().includes('history') ||
-            key.toLowerCase().includes('reco') ||
-            key.toLowerCase().includes('order')
-        )) {
-            keysToRemove.push(key);
-        }
-    }
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-    
-    // ── 채팅 화면 HTML 초기화 ──
-    const possibleChatContainers = [
-        'ai-messages', 'chat-messages', 'chat-list', 
-        'message-list', 'ai-chat', 'chat-container'
-    ];
-    possibleChatContainers.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = '';
-    });
-    document.querySelectorAll('[class*="message"], [class*="chat-bubble"]').forEach(el => {
-        if (el.parentElement && el.parentElement.children.length > 1) {
-            el.remove();
-        }
-    });
-    
-    // ── 메모리 변수 초기화 (있으면) ──
-    try {
-        if (typeof aiMessages !== 'undefined') aiMessages = [];
-        if (typeof aiHistory !== 'undefined') aiHistory = [];
-        if (typeof chatMessages !== 'undefined') chatMessages = [];
-        if (typeof aiCurrentProjectId !== 'undefined') aiCurrentProjectId = null;
-        if (typeof recoState !== 'undefined') {
-            recoState.recommendations = [];
-            recoState.selections = {};
-        }
-    } catch (e) { /* 변수 없으면 무시 */ }
-    
-    // ── 사용자 정보 초기화 ──
-    _currentUser = null;
-    const badge = document.getElementById('user-badge');
-    if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) { logoutBtn.style.display = 'none'; }
-    
-    // ── 화면 전환 ──
-    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-    showHeader(false);
-    showScreen('splash');
-  }
-
-  // ── 페이지 로드 시 자동 로그인 확인 ──
-  window.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) return;
-    try {
-      const res = await fetch(`${RENDER_SERVER_URL}/api/auth/me`);
-      if (res.ok) {
-        const user = await res.json();
-        _currentUser = { name: user.name || user.email.split('@')[0], email: user.email };
-        // 자동 로그인 표시만, 화면 전환은 사용자 액션에 맡김
-        const badge = document.getElementById('user-badge');
-        if (badge) { badge.textContent = '👤 ' + _currentUser.name; badge.style.display = 'inline'; }
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) { logoutBtn.style.display = 'inline-block'; }
-      } else {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+  // 페이지 로드 시 세션 복원
+  (function restoreSession() {
+    const a = getAuth();
+    if (a?.token) {
+      _currentUser = a;
+      const badge = document.getElementById('user-badge');
+      if (badge) {
+        badge.innerHTML = `👤 ${a.name || a.email} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
+        badge.style.display = 'inline';
       }
-    } catch (e) {
-      console.warn('자동 로그인 확인 실패:', e);
+      // 이미 로그인된 경우 splash 건너뛰고 modesel로
+      document.getElementById('splash').classList.add('hidden');
+      showScreen('modesel');
+      showHeader(true);
     }
-  });
+  })();
 
   /* ══════════════════════════════════════════
      별점 hover (1~n 동시 점등)
