@@ -4777,7 +4777,7 @@
     showHeader(false);
     setTimeout(() => showScreen('sc4-0'), 300);
   }
-  function doVendorLogin() {
+  async function doVendorLogin() {
     const email = document.getElementById('v-email').value.trim();
     const pw    = document.getElementById('v-pw').value;
     if (!email || !pw) {
@@ -4785,11 +4785,66 @@
       e.textContent = '⚠️ 이메일과 비밀번호를 입력해주세요.';
       e.style.display = 'block'; return;
     }
+    
     const errDiv = document.getElementById('vendor-login-error');
-    errDiv.textContent = '⚠️ 회원 정보가 없습니다. 판매자 등록을 먼저 해주세요.';
-    errDiv.style.display = 'block';
-    document.getElementById('v-email').style.borderColor = '#FECACA';
-    document.getElementById('v-pw').style.borderColor    = '#FECACA';
+    const btn = document.querySelector('#sc5-1 .submit-btn');
+    const origLabel = btn.innerHTML;
+    btn.innerHTML = '로그인 중…'; btn.disabled = true;
+    
+    try {
+      // 백엔드에서 판매자 프로필 조회
+      const res = await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(email)}`);
+      if (!res.ok) throw new Error('서버 응답 오류 ' + res.status);
+      const data = await res.json();
+      
+      // 가입 안 됨
+      if (!data.exists) {
+        errDiv.textContent = '⚠️ 회원 정보가 없습니다. 판매자 등록을 먼저 해주세요.';
+        errDiv.style.display = 'block';
+        document.getElementById('v-email').style.borderColor = '#FECACA';
+        document.getElementById('v-pw').style.borderColor    = '#FECACA';
+        return;
+      }
+      
+      // 시연용: 비밀번호는 길이 8자 이상만 체크 (백엔드에 비밀번호 컬럼 없음)
+      // 본격 인증 원하면 옵션 A로 통합 필요
+      if (pw.length < 8) {
+        errDiv.textContent = '⚠️ 비밀번호가 올바르지 않습니다.';
+        errDiv.style.display = 'block';
+        return;
+      }
+      
+      // 로그인 성공 - 백엔드 데이터로 _currentVendor 초기화
+      _currentVendor = {
+        company: data.company,
+        email: data.email,
+        addr: data.addr,
+        tel: data.tel,
+        bizno: data.bizno,
+        rebar_price: data.rebar_price,
+        mas_price: data.mas_price,
+        rebar_stock: data.rebar_stock,
+        mas_stock: data.mas_stock,
+        rebar_days: data.rebar_days,
+        rebar_spec: data.rebar_spec,
+        mas_days: data.mas_days,
+        mas_spec: data.mas_spec,
+      };
+      
+      // 비밀번호 입력란 비우기
+      document.getElementById('v-pw').value = '';
+      
+      // 대시보드로 이동
+      document.getElementById('sc5-1').classList.add('hidden');
+      setTimeout(() => afterVendorLogin(), 300);
+      
+    } catch (e) {
+      errDiv.textContent = '⚠️ 로그인 실패: ' + (e.message || '서버 연결 오류');
+      errDiv.style.display = 'block';
+    } finally {
+      btn.innerHTML = origLabel;
+      btn.disabled = false;
+    }
   }
 
   function doVendorSignup() {
