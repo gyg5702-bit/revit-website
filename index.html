@@ -592,6 +592,25 @@
     content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff;
   }
 
+  /* ── 소형 자재 카드 8개 그리드 ── */
+  .mat-card-sm {
+    position:relative; background:var(--steel-2);
+    border:2px solid var(--border); border-radius:12px;
+    padding:14px 8px 12px; text-align:center; cursor:pointer;
+    transition:all 0.2s; box-shadow:var(--shadow-sm);
+  }
+  .mat-card-sm:hover { border-color:var(--border-hover); transform:translateY(-2px); box-shadow:var(--shadow); }
+  .mat-card-sm.active { border-color:var(--orange); background:var(--orange-dim); }
+  .mat-card-sm.active .mat-name-sm { color:var(--orange); }
+  .mat-name-sm { font-size:12px; font-weight:700; margin-bottom:3px; }
+  .mat-sub-sm  { font-size:9px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; line-height:1.4; }
+  .mat-check-sm {
+    position:absolute; top:6px; right:6px;
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid var(--border); background:transparent; transition:all 0.2s;
+  }
+  .mat-card-sm.active .mat-check-sm { background:var(--orange); border-color:var(--orange); }
+
   /* ═══════════════════════════════════
      SC2-3 — 업체 추천 결과
   ═══════════════════════════════════ */
@@ -1597,7 +1616,60 @@
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9 6.5H4M6 4L3.5 6.5 6 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     이전으로
   </button>
-  <span id="user-badge" style="margin-left:12px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);display:none"></span>
+  <!-- 마이페이지 버튼 (로그인 시 표시) -->
+  <button id="mypage-btn" onclick="goMyPage()" style="display:none;margin-left:auto;background:transparent;border:1px solid var(--border);border-radius:7px;padding:7px 14px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;align-items:center;gap:6px;transition:all 0.2s;position:relative" onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='var(--border-hover)'" onmouseout="this.style.color='var(--text-secondary)';this.style.borderColor='var(--border)'">
+    👤 마이페이지
+    <span id="mypage-badge" style="display:none;position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#ef4444;border-radius:50%;font-size:10px;color:#fff;font-family:'JetBrains Mono',monospace;line-height:16px;text-align:center"></span>
+  </button>
+  <span id="user-badge" style="margin-left:8px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);display:none"></span>
+</div>
+
+<!-- ══════════════════════════════════
+     SC-MYPAGE — 마이페이지 (발주 현황)
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc-mypage">
+  <div style="width:100%;max-width:720px;margin:0 auto;padding:80px 1.5rem 60px">
+
+    <p class="do-step-label">// 마이페이지</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.6rem">
+      <h2 class="do-title" style="margin:0" id="mp-username">내 발주 현황</h2>
+      <button onclick="refreshMyOrders()" style="padding:8px 14px;background:transparent;border:1px solid rgba(56,108,200,0.3);border-radius:8px;color:#386CC8;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(56,108,200,0.07)'" onmouseout="this.style.background='transparent'">🔄 새로고침</button>
+    </div>
+
+    <!-- 요약 카드 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px" id="mp-summary">
+      <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <p style="font-size:24px;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--orange)" id="mp-count-total">0</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px">전체 발주</p>
+      </div>
+      <div style="background:var(--steel-2);border:1px solid rgba(232,123,12,0.3);border-radius:12px;padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <p style="font-size:24px;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--orange)" id="mp-count-pending">0</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px">수락 대기</p>
+      </div>
+      <div style="background:var(--steel-2);border:1px solid rgba(74,222,128,0.3);border-radius:12px;padding:14px 16px;text-align:center;box-shadow:var(--shadow-sm)">
+        <p style="font-size:24px;font-weight:900;font-family:'JetBrains Mono',monospace;color:#16a34a" id="mp-count-confirmed">0</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px">발주 확정</p>
+      </div>
+    </div>
+
+    <!-- 로딩 -->
+    <div id="mp-loading" style="text-align:center;padding:40px;color:var(--text-muted)">
+      <div class="bim-spinner" style="margin:0 auto 12px"></div>
+      <p style="font-size:13px">발주 내역을 불러오는 중...</p>
+    </div>
+
+    <!-- 발주 없음 -->
+    <div id="mp-empty" style="display:none;text-align:center;padding:48px 20px;background:var(--steel-2);border:1px solid var(--border);border-radius:14px">
+      <p style="font-size:32px;margin-bottom:12px">📭</p>
+      <p style="font-size:15px;font-weight:600;margin-bottom:6px">발주 내역이 없습니다</p>
+      <p style="font-size:13px;color:var(--text-secondary)">자재를 발주하면 여기서 진행 상황을 확인할 수 있어요</p>
+      <button onclick="goMode()" style="margin-top:16px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer">지금 발주하기</button>
+    </div>
+
+    <!-- 발주 목록 -->
+    <div id="mp-orders-list"></div>
+
+  </div>
 </div>
 
 <!-- ══════════════════════════════════
@@ -1714,18 +1786,54 @@
     <h2 class="do-title">어떤 자재가<br>필요하신가요?</h2>
     <p style="font-size:13px;color:var(--text-secondary);font-weight:300;margin-bottom:2rem;margin-top:-1.2rem">자재를 선택하고 다음 단계에서 세부 사양을 입력합니다.</p>
 
-    <div class="mat-grid" style="gap:16px;margin-bottom:2rem">
-      <div class="mat-card-lg" id="mc-rebar" onclick="sc21Select('rebar')">
-        <div class="mat-check-lg"></div>
-        <span style="font-size:40px;display:block;margin-bottom:14px">🔩</span>
-        <div class="mat-name-lg">철근</div>
-        <div class="mat-sub-lg">이형철근<br>SD300 / SD400 / SD500</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:2rem">
+      <div class="mat-card-sm" id="mc-rebar"      onclick="sc21Select('rebar')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🔩</span>
+        <div class="mat-name-sm">철근</div>
+        <div class="mat-sub-sm">SD300·400·500</div>
       </div>
-      <div class="mat-card-lg" id="mc-masonry" onclick="sc21Select('masonry')">
-        <div class="mat-check-lg"></div>
-        <span style="font-size:40px;display:block;margin-bottom:14px">🧱</span>
-        <div class="mat-name-lg">조적조</div>
-        <div class="mat-sub-lg">시멘트 블록<br>점토 벽돌 / 내화 벽돌</div>
+      <div class="mat-card-sm" id="mc-masonry"    onclick="sc21Select('masonry')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🧱</span>
+        <div class="mat-name-sm">조적조</div>
+        <div class="mat-sub-sm">블록·벽돌</div>
+      </div>
+      <div class="mat-card-sm" id="mc-concrete"   onclick="sc21Select('concrete')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🏗️</span>
+        <div class="mat-name-sm">콘크리트</div>
+        <div class="mat-sub-sm">레미콘·현장타설</div>
+      </div>
+      <div class="mat-card-sm" id="mc-formwork"   onclick="sc21Select('formwork')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🪵</span>
+        <div class="mat-name-sm">거푸집</div>
+        <div class="mat-sub-sm">유로폼·합판</div>
+      </div>
+      <div class="mat-card-sm" id="mc-steel"      onclick="sc21Select('steel')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🔧</span>
+        <div class="mat-name-sm">강재</div>
+        <div class="mat-sub-sm">H형강·각관</div>
+      </div>
+      <div class="mat-card-sm" id="mc-insulation" onclick="sc21Select('insulation')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🌡️</span>
+        <div class="mat-name-sm">단열재</div>
+        <div class="mat-sub-sm">XPS·EPS·미네랄울</div>
+      </div>
+      <div class="mat-card-sm" id="mc-finishing"  onclick="sc21Select('finishing')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🎨</span>
+        <div class="mat-name-sm">마감재</div>
+        <div class="mat-sub-sm">타일·마루·도장</div>
+      </div>
+      <div class="mat-card-sm" id="mc-windows"    onclick="sc21Select('windows')">
+        <div class="mat-check-sm"></div>
+        <span style="font-size:26px;display:block;margin-bottom:6px">🪟</span>
+        <div class="mat-name-sm">창호·도어</div>
+        <div class="mat-sub-sm">시스템창·방화문</div>
       </div>
     </div>
 
@@ -1790,16 +1898,30 @@
 <div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center">
   <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:400px;margin:0 1rem">
     <p style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--orange);margin-bottom:12px;letter-spacing:1px">추가할 자재 선택</p>
-    <div class="mat-grid" style="gap:12px;margin-bottom:20px">
-      <div class="mat-card" onclick="addItem('rebar');closeModal()" style="cursor:pointer">
-        <span class="mat-emoji">🔩</span>
-        <div class="mat-name">철근</div>
-        <div class="mat-sub">SD300 / SD400</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div class="mat-card" onclick="addItem('rebar');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🔩</div><div class="mat-name" style="font-size:12px">철근</div>
       </div>
-      <div class="mat-card" onclick="addItem('masonry');closeModal()" style="cursor:pointer">
-        <span class="mat-emoji">🧱</span>
-        <div class="mat-name">조적조</div>
-        <div class="mat-sub">블록 / 벽돌</div>
+      <div class="mat-card" onclick="addItem('masonry');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🧱</div><div class="mat-name" style="font-size:12px">조적조</div>
+      </div>
+      <div class="mat-card" onclick="addItem('concrete');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🏗️</div><div class="mat-name" style="font-size:12px">콘크리트</div>
+      </div>
+      <div class="mat-card" onclick="addItem('formwork');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🪵</div><div class="mat-name" style="font-size:12px">거푸집</div>
+      </div>
+      <div class="mat-card" onclick="addItem('steel');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🔧</div><div class="mat-name" style="font-size:12px">강재</div>
+      </div>
+      <div class="mat-card" onclick="addItem('insulation');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🌡️</div><div class="mat-name" style="font-size:12px">단열재</div>
+      </div>
+      <div class="mat-card" onclick="addItem('finishing');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🎨</div><div class="mat-name" style="font-size:12px">마감재</div>
+      </div>
+      <div class="mat-card" onclick="addItem('windows');closeModal()" style="cursor:pointer;padding:12px 6px;text-align:center">
+        <div style="font-size:22px;margin-bottom:4px">🪟</div><div class="mat-name" style="font-size:12px">창호·도어</div>
       </div>
     </div>
     <button onclick="closeModal()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer">취소</button>
@@ -1866,6 +1988,60 @@
 </div>
 
 <!-- ══════════════════════════════════
+     SC2-3.5 — 최종 발주 확인
+══════════════════════════════════ -->
+<div class="screen hidden" id="sc2-3x">
+  <div class="sc4-inner">
+
+    <p class="do-step-label">// MODE 01 · 최종 확인</p>
+    <h2 class="do-title" style="margin-bottom:.5rem">발주 내용을<br>확인해주세요</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1.6rem">아래 내용으로 발주를 진행합니다. 발주 후에는 취소가 어렵습니다.</p>
+
+    <!-- 현장 정보 요약 -->
+    <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow-sm)">
+      <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">현장 정보</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <p style="font-size:10px;color:var(--text-muted);margin-bottom:3px">공사명</p>
+          <p style="font-size:14px;font-weight:700" id="cf-projname">—</p>
+        </div>
+        <div>
+          <p style="font-size:10px;color:var(--text-muted);margin-bottom:3px">희망 납기</p>
+          <p style="font-size:14px;font-weight:700" id="cf-projdate">—</p>
+        </div>
+        <div style="grid-column:1/-1">
+          <p style="font-size:10px;color:var(--text-muted);margin-bottom:3px">현장 주소</p>
+          <p style="font-size:13px;font-weight:600" id="cf-projaddr">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 자재·업체별 확인 카드 -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">발주 자재 및 업체</p>
+    <div id="cf-items-list" style="margin-bottom:14px"></div>
+
+    <!-- 총 예상 금액 -->
+    <div style="background:var(--orange-dim);border:1px solid rgba(232,123,12,0.3);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--orange);letter-spacing:1px;margin-bottom:4px">TOTAL (부가세 별도)</p>
+        <p style="font-size:12px;color:var(--text-secondary)" id="cf-supply-label">공급가액</p>
+      </div>
+      <p style="font-size:22px;font-weight:900;color:var(--orange);font-family:'JetBrains Mono',monospace" id="cf-total">—</p>
+    </div>
+
+    <!-- 버튼 -->
+    <button class="submit-btn" id="cf-confirm-btn" onclick="confirmAndOrder()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      최종 발주하기
+    </button>
+    <button onclick="backToVendorSelect()" style="width:100%;margin-top:10px;padding:12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--border-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+      ← 업체 다시 선택
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
      SC2-4 — 발주 완료 + 내역서
 ══════════════════════════════════ -->
 <div class="screen hidden" id="sc2-4">
@@ -1874,9 +2050,35 @@
     <!-- 완료 배너 -->
     <div class="complete-banner">
       <div class="check-circle">✓</div>
-      <div class="complete-title">발주가 완료되었습니다</div>
-      <div class="complete-sub">업체에 발주 요청이 전송되었습니다. 담당자가 확인 후 연락드립니다.</div>
+      <div class="complete-title" id="sc4-complete-title">발주 접수 완료</div>
+      <div class="complete-sub" id="sc4-complete-sub">업체에 발주 요청이 전송되었습니다. 업체 수락 후 발주가 확정됩니다.</div>
       <div class="order-num" id="order-num-display">—</div>
+    </div>
+
+    <!-- 발주 상태 스텝 -->
+    <div style="background:var(--steel-2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow-sm)">
+      <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px">발주 진행 상태</p>
+      <div style="display:flex;align-items:center;gap:0;position:relative">
+        <!-- 선 배경 -->
+        <div style="position:absolute;left:16px;right:16px;height:2px;background:var(--steel-4);top:15px;z-index:0"></div>
+        <div id="status-line" style="position:absolute;left:16px;height:2px;background:var(--orange);top:15px;z-index:1;transition:width 0.5s ease;width:0%"></div>
+        <!-- 스텝 3개 -->
+        <div class="order-step active" id="step-1" style="flex:1;text-align:center;position:relative;z-index:2">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--orange);border:2px solid var(--orange);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">1</div>
+          <p style="font-size:11px;font-weight:600;color:var(--orange)">발주 접수</p>
+        </div>
+        <div class="order-step" id="step-2" style="flex:1;text-align:center;position:relative;z-index:2">
+          <div id="step2-circle" style="width:32px;height:32px;border-radius:50%;background:var(--steel-4);border:2px solid var(--border);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px;font-weight:700;transition:all 0.5s">2</div>
+          <p id="step2-label" style="font-size:11px;font-weight:600;color:var(--text-muted);transition:color 0.3s">발주 확정</p>
+        </div>
+        <div class="order-step" id="step-3" style="flex:1;text-align:center;position:relative;z-index:2">
+          <div id="step3-circle" style="width:32px;height:32px;border-radius:50%;background:var(--steel-4);border:2px solid var(--border);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px;font-weight:700;transition:all 0.5s">3</div>
+          <p id="step3-label" style="font-size:11px;font-weight:600;color:var(--text-muted);transition:color 0.3s">납품 완료</p>
+        </div>
+      </div>
+      <div id="order-status-msg" style="text-align:center;margin-top:14px;padding:10px;background:rgba(232,123,12,0.08);border-radius:8px;font-size:12px;color:var(--orange);font-weight:600">
+        ⏳ 업체 수락 대기 중... (판매자 대시보드에서 수락 시 자동 업데이트)
+      </div>
     </div>
 
     <!-- 업체별 내역서 (JS 동적 생성) -->
@@ -1886,6 +2088,7 @@
     <div class="action-grid">
       <button class="action-btn ghost" onclick="printInvoice()">🖨️ 출력하기</button>
       <button class="action-btn ghost" onclick="copyOrderNum()">📋 발주번호 복사</button>
+      <button class="action-btn ghost" onclick="checkOrderStatus()">🔄 상태 확인</button>
       <button class="action-btn orange full" onclick="goReview()">⭐ 업체 리뷰 작성하기</button>
       <button class="action-btn ghost full" onclick="goHome()">처음으로 돌아가기</button>
     </div>
@@ -3445,23 +3648,41 @@
   }
 
   /* ── SC2-1 자재 선택 ── */
+  const MAT_ALL = ['rebar','masonry','concrete','formwork','steel','insulation','finishing','windows'];
+  const MAT_LABEL = {
+    rebar:'🔩 철근', masonry:'🧱 조적조', concrete:'🏗️ 콘크리트',
+    formwork:'🪵 거푸집', steel:'🔧 강재', insulation:'🌡️ 단열재',
+    finishing:'🎨 마감재', windows:'🪟 창호·도어'
+  };
+
   function sc21Select(mat) {
     sc21Selected = mat;
-    document.getElementById('mc-rebar').classList.toggle('active', mat === 'rebar');
-    document.getElementById('mc-masonry').classList.toggle('active', mat === 'masonry');
+    MAT_ALL.forEach(m => document.getElementById('mc-'+m)?.classList.toggle('active', m === mat));
     document.getElementById('sc21-next').disabled = false;
   }
 
   /* ── SC2-2 자재 항목 동적 추가 ── */
+  const MAT_FIELDS = {
+    rebar:       rebarFields,
+    masonry:     masonryFields,
+    concrete:    concreteFields,
+    formwork:    formworkFields,
+    steel:       steelFields,
+    insulation:  insulationFields,
+    finishing:   finishingFields,
+    windows:     windowsFields,
+  };
+
   function addItem(type) {
     itemCount++;
-    const id = itemCount;
-    const label = type === 'rebar' ? '🔩 철근' : '🧱 조적조';
-    const fields = type === 'rebar' ? rebarFields(id) : masonryFields(id);
+    const id     = itemCount;
+    const label  = MAT_LABEL[type] || type;
+    const fields = (MAT_FIELDS[type] || rebarFields)(id);
 
     const div = document.createElement('div');
     div.className = 'do-section item-block';
     div.id = `item-${id}`;
+    div.dataset.matType = type;
     div.style.animation = 'up 0.3s ease both';
     div.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -3477,8 +3698,7 @@
     if (el) { el.style.opacity='0'; el.style.transform='translateY(-8px)'; el.style.transition='all 0.2s'; setTimeout(()=>el.remove(), 200); }
   }
 
-  function rebarFields(id) {
-    return `
+  function rebarFields(id) { return `
       <div class="field-wrap">
         <label class="field-label">규격</label>
         <div class="select-wrap"><select class="field-select">
@@ -3501,19 +3721,14 @@
       <div class="field-wrap">
         <label class="field-label">수량</label>
         <div class="qty-row"><input class="field-input" type="number" min="1" value="10" placeholder="수량"><span class="qty-unit">ton</span></div>
-      </div>`;
-  }
+      </div>`; }
 
-  function masonryFields(id) {
-    return `
+  function masonryFields(id) { return `
       <div class="field-wrap">
         <label class="field-label">종류</label>
         <div class="select-wrap"><select class="field-select">
-          <option>시멘트 블록 0.5B</option>
-          <option>시멘트 블록 1.0B</option>
-          <option>점토 벽돌 0.5B</option>
-          <option>점토 벽돌 1.0B</option>
-          <option>내화 벽돌</option>
+          <option>시멘트 블록 0.5B</option><option>시멘트 블록 1.0B</option>
+          <option>점토 벽돌 0.5B</option><option>점토 벽돌 1.0B</option><option>내화 벽돌</option>
         </select></div>
       </div>
       <div class="field-wrap">
@@ -3525,17 +3740,178 @@
       <div class="field-wrap full">
         <label class="field-label">수량</label>
         <div class="qty-row"><input class="field-input" type="number" min="1" value="1000" placeholder="수량"><span class="qty-unit">장</span></div>
-      </div>`;
-  }
+      </div>`; }
+
+  function concreteFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">설계기준강도 (fck)</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>18 MPa</option><option>21 MPa</option><option selected>24 MPa</option>
+          <option>27 MPa</option><option>30 MPa</option><option>35 MPa</option><option>40 MPa</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">슬럼프</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>80 mm</option><option selected>120 mm</option><option>150 mm</option><option>180 mm</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">골재 최대치수</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>20 mm</option><option selected>25 mm</option><option>40 mm</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">타설 수량</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="100" placeholder="수량"><span class="qty-unit">㎥</span></div>
+      </div>`; }
+
+  function formworkFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">종류</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>유로폼</option><option>합판 거푸집</option><option>알루미늄폼</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">패널 규격 (폭×길이)</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>600×1200 mm</option><option>600×900 mm</option>
+          <option>500×1200 mm</option><option>450×1200 mm</option>
+          <option>400×1200 mm</option><option>350×1200 mm</option>
+          <option>300×1200 mm</option><option>250×1200 mm</option>
+          <option>200×1200 mm</option><option>150×1200 mm</option>
+          <option>100×1200 mm</option><option>150×900 mm</option><option>100×900 mm</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">타설 면적</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="300" placeholder="면적"><span class="qty-unit">㎡</span></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">임대 기간</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="30" placeholder="일수"><span class="qty-unit">일</span></div>
+      </div>`; }
+
+  function steelFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">종류</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>H형강</option><option>각형강관</option><option>원형강관</option>
+          <option>ㄱ형강(앵글)</option><option>플레이트</option><option>I형강</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">규격</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>H-100×100×6×8</option><option>H-150×150×7×10</option>
+          <option selected>H-200×200×8×12</option><option>H-250×250×9×14</option>
+          <option>H-300×300×10×15</option><option>H-350×350×12×19</option>
+          <option>H-400×400×13×21</option><option>직접 입력</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">강도등급</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>SS400</option><option>SM490</option><option>SM570</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">수량</label>
+        <div class="qty-row"><input class="field-input" type="number" min="0.1" step="0.1" value="5" placeholder="수량"><span class="qty-unit">ton</span></div>
+      </div>`; }
+
+  function insulationFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">종류</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>XPS (압출법 폴리스티렌)</option>
+          <option>EPS (발포 폴리스티렌)</option>
+          <option>미네랄울 (암면)</option>
+          <option>경질우레탄폼</option>
+          <option>그라스울</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">두께</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>30 mm</option><option selected>50 mm</option><option>75 mm</option>
+          <option>100 mm</option><option>125 mm</option><option>150 mm</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">등급</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>가급</option><option>나급</option><option>다급</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">면적</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="500" placeholder="면적"><span class="qty-unit">㎡</span></div>
+      </div>`; }
+
+  function finishingFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">종류</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>타일</option><option>강화마루</option><option>LVT (데코타일)</option>
+          <option>석고보드</option><option>수성도장</option><option>에폭시도장</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">규격</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>300×300 mm</option><option>400×400 mm</option><option>600×600 mm</option>
+          <option>1200×600 mm</option><option>1215×195 mm (마루)</option>
+          <option>1200×2400 mm (석고)</option><option>기타</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">색상·패턴</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>무광 화이트</option><option>유광 그레이</option><option>우드패턴</option>
+          <option>대리석패턴</option><option>솔리드 컬러</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">시공 면적</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="200" placeholder="면적"><span class="qty-unit">㎡</span></div>
+      </div>`; }
+
+  function windowsFields(id) { return `
+      <div class="field-wrap">
+        <label class="field-label">종류</label>
+        <div class="select-wrap"><select class="field-select">
+          <option selected>시스템창호 (이중창)</option><option>시스템창호 (단창)</option>
+          <option>알루미늄 창호</option><option>방화문 (갑종)</option>
+          <option>방화문 (을종)</option><option>일반 도어</option><option>자동문</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">개구부 규격</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>W900×H1200</option><option selected>W1000×H1200</option>
+          <option>W1200×H1200</option><option>W1500×H1200</option>
+          <option>W1800×H1200</option><option>W2000×H2100 (문)</option>
+          <option>W900×H2100 (문)</option><option>직접 입력</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">유리 사양</label>
+        <div class="select-wrap"><select class="field-select">
+          <option>로이유리 (22mm)</option><option selected>로이삼중유리 (36mm)</option>
+          <option>일반복층유리 (16mm)</option><option>방화유리</option>
+        </select></div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">수량</label>
+        <div class="qty-row"><input class="field-input" type="number" min="1" value="10" placeholder="수량"><span class="qty-unit">EA</span></div>
+      </div>`; }
 
   /* ── 모달 ── */
-  function openAddModal() {
-    const o = document.getElementById('modal-overlay');
-    o.style.display = 'flex';
-  }
-  function closeModal() {
-    document.getElementById('modal-overlay').style.display = 'none';
-  }
+  function openAddModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+  function closeModal()    { document.getElementById('modal-overlay').style.display = 'none'; }
 
   /* ── BIM fetch ── */
   /* ══════════════════════════════════════════
@@ -4237,28 +4613,96 @@
   
   /* fallback 데이터 (백엔드 실패 시) */
   const VENDOR_DB_FALLBACK = {
+    /* ────────────────────────────────────────────────────────
+       2025년 상반기 경기도 건설자재 실거래가 기준
+       출처: 한국건설기술연구원 표준시장단가, 업계 유통가 평균
+    ──────────────────────────────────────────────────────── */
+
+    /* 철근 SD400 D16 6m 기준: 980,000~1,050,000원/ton */
     rebar: [
-      { id:1, name:'수원철강(주)',   type:'유통·가공', addr:'수원시 권선구 산업로 156',      tel:'031-291-XXXX', lat:37.2614, lng:126.9821, price:1035000, rating:4.3 },
-      { id:2, name:'경기스틸(주)',   type:'유통',       addr:'수원시 장안구 정조로 1000',     tel:'031-244-XXXX', lat:37.3010, lng:127.0099, price:1030000, rating:4.1 },
-      { id:3, name:'(주)한성철강',  type:'유통·가공', addr:'수원시 팔달구 효원로 300',      tel:'031-222-XXXX', lat:37.2806, lng:127.0144, price:1040000, rating:4.5 },
-      { id:4, name:'동원철강(주)',   type:'가공센터',   addr:'용인시 기흥구 산업단지로 55',  tel:'031-284-XXXX', lat:37.2517, lng:127.1156, price:1025000, rating:4.6 },
-      { id:5, name:'(주)용인스틸',  type:'유통',       addr:'용인시 처인구 중부대로 1500',  tel:'031-332-XXXX', lat:37.2342, lng:127.2014, price:1033000, rating:4.0 },
-      { id:6, name:'기흥철강(주)',   type:'유통·가공', addr:'용인시 기흥구 흥덕1로 100',    tel:'031-281-XXXX', lat:37.2735, lng:127.1167, price:1027000, rating:4.4 },
-      { id:7, name:'수지스틸(주)',   type:'유통',       addr:'용인시 수지구 풍덕천로 200',   tel:'031-265-XXXX', lat:37.3219, lng:127.0938, price:1037000, rating:4.2 },
-      { id:8, name:'(주)광교철강',  type:'유통·가공', addr:'수원시 영통구 광교중앙로 148', tel:'031-216-XXXX', lat:37.2871, lng:127.0586, price:1045000, rating:4.7 },
-      { id:9, name:'화성철강(주)',   type:'유통',       addr:'화성시 동탄산단1로 50',        tel:'031-374-XXXX', lat:37.2056, lng:127.0726, price:1022000, rating:4.3 },
-      { id:10,name:'(주)경인스틸',  type:'대리점',     addr:'수원시 권선구 권선로 900',      tel:'031-293-XXXX', lat:37.2589, lng:126.9745, price:1043000, rating:4.5 },
+      { id:1,  name:'수원철강(주)',  type:'유통·가공', addr:'수원시 권선구 산업로 156',       tel:'031-291-XXXX', lat:37.2614, lng:126.9821, price:1025000, rating:4.3 },
+      { id:2,  name:'경기스틸(주)',  type:'유통',      addr:'수원시 장안구 정조로 1000',      tel:'031-244-XXXX', lat:37.3010, lng:127.0099, price:998000,  rating:4.1 },
+      { id:3,  name:'(주)한성철강', type:'유통·가공', addr:'수원시 팔달구 효원로 300',       tel:'031-222-XXXX', lat:37.2806, lng:127.0144, price:1038000, rating:4.5 },
+      { id:4,  name:'동원철강(주)',  type:'가공센터',  addr:'용인시 기흥구 산업단지로 55',    tel:'031-284-XXXX', lat:37.2517, lng:127.1156, price:988000,  rating:4.6 },
+      { id:5,  name:'(주)용인스틸', type:'유통',      addr:'용인시 처인구 중부대로 1500',    tel:'031-332-XXXX', lat:37.2342, lng:127.2014, price:1012000, rating:4.0 },
+      { id:6,  name:'기흥철강(주)',  type:'유통·가공', addr:'용인시 기흥구 흥덕1로 100',     tel:'031-281-XXXX', lat:37.2735, lng:127.1167, price:1005000, rating:4.4 },
+      { id:7,  name:'수지스틸(주)',  type:'유통',      addr:'용인시 수지구 풍덕천로 200',     tel:'031-265-XXXX', lat:37.3219, lng:127.0938, price:1020000, rating:4.2 },
+      { id:8,  name:'(주)광교철강', type:'유통·가공', addr:'수원시 영통구 광교중앙로 148',   tel:'031-216-XXXX', lat:37.2871, lng:127.0586, price:1045000, rating:4.7 },
+      { id:9,  name:'화성철강(주)',  type:'유통',      addr:'화성시 동탄산단1로 50',          tel:'031-374-XXXX', lat:37.2056, lng:127.0726, price:982000,  rating:4.3 },
+      { id:10, name:'(주)경인스틸', type:'대리점',    addr:'수원시 권선구 권선로 900',        tel:'031-293-XXXX', lat:37.2589, lng:126.9745, price:1035000, rating:4.5 },
     ],
+
+    /* 조적조 시멘트블록 190×90×57mm 기준: 78~92원/장 */
     masonry: [
-      { id:11, name:'수원건자재(주)', type:'도매',       addr:'수원시 권선구 권선로 850',      tel:'031-296-XXXX', lat:37.2597, lng:126.9788, price:85, rating:4.2 },
-      { id:12, name:'(주)경기조적',  type:'도매·시공', addr:'수원시 장안구 정자로 200',      tel:'031-241-XXXX', lat:37.3057, lng:127.0125, price:80, rating:4.6 },
-      { id:13, name:'용인건재(주)',   type:'도매',       addr:'용인시 기흥구 산업단지로 88',  tel:'031-286-XXXX', lat:37.2545, lng:127.1187, price:78, rating:4.5 },
-      { id:14, name:'(주)한일벽돌',  type:'제조·판매', addr:'용인시 처인구 백암면 백봉로 300', tel:'031-333-XXXX', lat:37.1465, lng:127.3211, price:72, rating:4.8 },
-      { id:15, name:'광교건자재(주)', type:'도매',       addr:'수원시 영통구 광교중앙로 80',  tel:'031-218-XXXX', lat:37.2856, lng:127.0593, price:88, rating:4.3 },
-      { id:16, name:'(주)동탄자재',  type:'도매',       addr:'화성시 동탄대로 900',           tel:'031-376-XXXX', lat:37.2018, lng:127.0789, price:75, rating:4.4 },
-      { id:17, name:'기흥건재(주)',   type:'도매·시공', addr:'용인시 기흥구 흥덕2로 55',     tel:'031-283-XXXX', lat:37.2756, lng:127.1198, price:82, rating:4.5 },
-      { id:18, name:'(주)수지자재',  type:'도매',       addr:'용인시 수지구 신봉2로 100',    tel:'031-262-XXXX', lat:37.3286, lng:127.1009, price:86, rating:4.1 },
-    ]
+      { id:11, name:'수원건자재(주)',  type:'도매',      addr:'수원시 권선구 권선로 850',      tel:'031-296-XXXX', lat:37.2597, lng:126.9788, price:88,  rating:4.2 },
+      { id:12, name:'(주)경기조적',   type:'도매·시공', addr:'수원시 장안구 정자로 200',      tel:'031-241-XXXX', lat:37.3057, lng:127.0125, price:83,  rating:4.6 },
+      { id:13, name:'용인건재(주)',    type:'도매',      addr:'용인시 기흥구 산업단지로 88',   tel:'031-286-XXXX', lat:37.2545, lng:127.1187, price:80,  rating:4.5 },
+      { id:14, name:'(주)한일벽돌',   type:'제조·판매', addr:'용인시 처인구 백암면 백봉로 300', tel:'031-333-XXXX', lat:37.1465, lng:127.3211, price:78,  rating:4.8 },
+      { id:15, name:'광교건자재(주)',  type:'도매',      addr:'수원시 영통구 광교중앙로 80',   tel:'031-218-XXXX', lat:37.2856, lng:127.0593, price:91,  rating:4.3 },
+      { id:16, name:'(주)동탄자재',   type:'도매',      addr:'화성시 동탄대로 900',            tel:'031-376-XXXX', lat:37.2018, lng:127.0789, price:79,  rating:4.4 },
+      { id:17, name:'기흥건재(주)',    type:'도매·시공', addr:'용인시 기흥구 흥덕2로 55',      tel:'031-283-XXXX', lat:37.2756, lng:127.1198, price:85,  rating:4.5 },
+      { id:18, name:'(주)수지자재',   type:'도매',      addr:'용인시 수지구 신봉2로 100',     tel:'031-262-XXXX', lat:37.3286, lng:127.1009, price:89,  rating:4.1 },
+    ],
+
+    /* 레미콘 fck 24MPa 슬럼프120 25mm골재 기준: 95,000~108,000원/㎥ */
+    concrete: [
+      { id:101, name:'수원레미콘(주)',  type:'레미콘', addr:'수원시 권선구 호매실로 100',     tel:'031-296-XXXX', lat:37.2458, lng:126.9912, price:103000, rating:4.2 },
+      { id:102, name:'(주)경기레미콘', type:'레미콘', addr:'수원시 장안구 파장로 55',        tel:'031-245-XXXX', lat:37.3102, lng:127.0022, price:98000,  rating:4.4 },
+      { id:103, name:'화성레미콘(주)',  type:'레미콘', addr:'화성시 동탄지성로 200',          tel:'031-374-XXXX', lat:37.2108, lng:127.0755, price:96000,  rating:4.3 },
+      { id:104, name:'(주)용인레미콘', type:'레미콘', addr:'용인시 기흥구 구성로 300',       tel:'031-285-XXXX', lat:37.2665, lng:127.1234, price:105000, rating:4.1 },
+      { id:105, name:'경인레미콘(주)',  type:'레미콘', addr:'수원시 영통구 법조로 65',        tel:'031-217-XXXX', lat:37.2789, lng:127.0465, price:100000, rating:4.5 },
+      { id:106, name:'(주)기흥레미콘', type:'레미콘', addr:'용인시 기흥구 흥덕3로 20',       tel:'031-282-XXXX', lat:37.2801, lng:127.1299, price:108000, rating:4.0 },
+    ],
+
+    /* 유로폼 임대 기준: 3,800~5,200원/㎡·일 (동바리 별도) */
+    formwork: [
+      { id:201, name:'수원거푸집(주)',  type:'임대·판매', addr:'수원시 권선구 산업로 220',    tel:'031-292-XXXX', lat:37.2601, lng:126.9888, price:4500, rating:4.3 },
+      { id:202, name:'(주)경기폼텍',   type:'임대',      addr:'수원시 장안구 율전로 88',      tel:'031-246-XXXX', lat:37.3045, lng:127.0089, price:4200, rating:4.4 },
+      { id:203, name:'화성폼텍(주)',    type:'임대·판매', addr:'화성시 동탄순환대로 500',      tel:'031-375-XXXX', lat:37.2089, lng:127.0698, price:3800, rating:4.2 },
+      { id:204, name:'(주)한국거푸집', type:'임대',      addr:'용인시 수지구 신수로 150',     tel:'031-264-XXXX', lat:37.3198, lng:127.0821, price:5200, rating:4.6 },
+      { id:205, name:'동원폼텍(주)',    type:'임대·판매', addr:'용인시 기흥구 마북로 80',      tel:'031-287-XXXX', lat:37.2689, lng:127.1178, price:4000, rating:4.1 },
+      { id:206, name:'(주)광교폼',     type:'임대',      addr:'수원시 영통구 광교중앙로 66',  tel:'031-219-XXXX', lat:37.2901, lng:127.0499, price:4300, rating:4.5 },
+    ],
+
+    /* H형강 H-200×200×8×12 SS400 기준: 900,000~1,020,000원/ton */
+    steel: [
+      { id:301, name:'수원강재(주)',    type:'유통·가공', addr:'수원시 권선구 산업로 344',     tel:'031-293-XXXX', lat:37.2588, lng:126.9811, price:965000,  rating:4.2 },
+      { id:302, name:'(주)경기강재',   type:'유통',      addr:'수원시 장안구 정조로 500',     tel:'031-247-XXXX', lat:37.3088, lng:127.0011, price:912000,  rating:4.4 },
+      { id:303, name:'용인강재(주)',    type:'유통·가공', addr:'용인시 기흥구 산업단지로 120', tel:'031-288-XXXX', lat:37.2512, lng:127.1198, price:938000,  rating:4.3 },
+      { id:304, name:'(주)한성강재',   type:'유통',      addr:'수원시 팔달구 매산로 200',     tel:'031-223-XXXX', lat:37.2811, lng:127.0199, price:985000,  rating:4.5 },
+      { id:305, name:'동원강재(주)',    type:'가공센터',  addr:'화성시 향남읍 발안산단로 55',  tel:'031-354-XXXX', lat:37.1655, lng:126.9978, price:900000,  rating:4.1 },
+      { id:306, name:'(주)경인강재',   type:'대리점',    addr:'수원시 권선구 권선로 600',     tel:'031-294-XXXX', lat:37.2572, lng:126.9699, price:1020000, rating:4.6 },
+    ],
+
+    /* XPS 압출법 50mm 가급 기준: 11,500~16,000원/㎡ (2025년 인상 반영) */
+    insulation: [
+      { id:401, name:'수원단열(주)',    type:'제조·판매', addr:'수원시 권선구 호매실로 88',    tel:'031-297-XXXX', lat:37.2432, lng:126.9934, price:13500, rating:4.2 },
+      { id:402, name:'(주)경기단열',   type:'도매',      addr:'수원시 장안구 파장천로 33',    tel:'031-248-XXXX', lat:37.3077, lng:127.0045, price:12800, rating:4.4 },
+      { id:403, name:'화성단열(주)',    type:'도매',      addr:'화성시 봉담읍 발안로 200',     tel:'031-355-XXXX', lat:37.2012, lng:126.9877, price:11500, rating:4.3 },
+      { id:404, name:'(주)한국단열',   type:'제조·판매', addr:'용인시 처인구 남사면 완장로 44', tel:'031-334-XXXX', lat:37.1388, lng:127.2211, price:16000, rating:4.6 },
+      { id:405, name:'용인단열(주)',    type:'도매',      addr:'용인시 기흥구 중부대로 60',    tel:'031-289-XXXX', lat:37.2700, lng:127.1100, price:12500, rating:4.1 },
+      { id:406, name:'(주)광교단열',   type:'도매',      addr:'수원시 영통구 광교호수로 55',  tel:'031-220-XXXX', lat:37.2933, lng:127.0522, price:14200, rating:4.5 },
+    ],
+
+    /* 포세린 타일 300×300mm 기준: 18,000~32,000원/㎡ (자재만, 시공비 별도) */
+    finishing: [
+      { id:501, name:'수원마감재(주)',   type:'도매·시공', addr:'수원시 권선구 권선로 700',    tel:'031-298-XXXX', lat:37.2601, lng:126.9822, price:24000, rating:4.2 },
+      { id:502, name:'(주)경기건자재',  type:'도매',      addr:'수원시 장안구 조원동 산업로 44', tel:'031-249-XXXX', lat:37.3022, lng:127.0055, price:21000, rating:4.4 },
+      { id:503, name:'화성인테리어(주)', type:'도매·시공', addr:'화성시 동탄신도시 동탄대로 200', tel:'031-377-XXXX', lat:37.2033, lng:127.0799, price:18000, rating:4.3 },
+      { id:504, name:'(주)한국마감',    type:'도매',      addr:'용인시 기흥구 구성로 55',     tel:'031-290-XXXX', lat:37.2671, lng:127.1312, price:29000, rating:4.6 },
+      { id:505, name:'용인건재(주)',     type:'도매·시공', addr:'용인시 수지구 풍덕천로 300',  tel:'031-266-XXXX', lat:37.3231, lng:127.0911, price:22000, rating:4.1 },
+      { id:506, name:'(주)광교마감',    type:'도매',      addr:'수원시 영통구 법조로 22',     tel:'031-221-XXXX', lat:37.2768, lng:127.0488, price:32000, rating:4.5 },
+    ],
+
+    /* 시스템창호 PVC 이중창 기준: 185,000~270,000원/㎡ (설치 포함) */
+    windows: [
+      { id:601, name:'수원창호(주)',     type:'제조·시공', addr:'수원시 권선구 산업로 500',    tel:'031-299-XXXX', lat:37.2561, lng:126.9799, price:220000, rating:4.3 },
+      { id:602, name:'(주)경기창호',    type:'제조·판매', addr:'수원시 장안구 덕영대로 1200', tel:'031-250-XXXX', lat:37.3033, lng:127.0011, price:195000, rating:4.5 },
+      { id:603, name:'화성창호(주)',     type:'시공',      addr:'화성시 봉담읍 와우안길 100',  tel:'031-356-XXXX', lat:37.2144, lng:126.9845, price:205000, rating:4.2 },
+      { id:604, name:'(주)한국창호',    type:'제조·판매', addr:'용인시 처인구 남사읍 완장1로 55', tel:'031-335-XXXX', lat:37.1400, lng:127.2189, price:250000, rating:4.4 },
+      { id:605, name:'용인창호(주)',     type:'시공',      addr:'용인시 수지구 신수로 88',     tel:'031-267-XXXX', lat:37.3212, lng:127.0855, price:215000, rating:4.1 },
+      { id:606, name:'(주)광교창호',    type:'제조·시공', addr:'수원시 영통구 광교중앙로 100', tel:'031-222-XXXX', lat:37.2866, lng:127.0521, price:270000, rating:4.6 },
+    ],
   };
   
   /* 백엔드 동기화될 메인 VENDOR_DB - 초기에는 fallback과 동일 */
@@ -4346,30 +4790,119 @@
   /* ══════════════════════════════════════════
      간이 지오코딩 (Kakao API 연동 전 임시)
   ══════════════════════════════════════════ */
+  /* ══════════════════════════════════════════
+     주소 → 좌표 (Nominatim) + 도로거리 (OSRM)
+  ══════════════════════════════════════════ */
+
+  // 간이 GEO_TABLE (Nominatim 실패 시 fallback)
   const GEO_TABLE = [
-    { key:'경희대',    lat:37.5927, lng:127.0516 },
-    { key:'동대문',    lat:37.5744, lng:127.0395 },
-    { key:'회기',      lat:37.5896, lng:127.0556 },
-    { key:'수원',      lat:37.2636, lng:127.0286 },
-    { key:'영통',      lat:37.2802, lng:127.0472 },
-    { key:'광교',      lat:37.2845, lng:127.0446 },
-    { key:'권선',      lat:37.2516, lng:127.0220 },
-    { key:'장안',      lat:37.2978, lng:127.0085 },
-    { key:'팔달',      lat:37.2647, lng:127.0325 },
-    { key:'용인',      lat:37.2341, lng:127.2018 },
-    { key:'기흥',      lat:37.2751, lng:127.1149 },
-    { key:'수지',      lat:37.3219, lng:127.0973 },
-    { key:'처인',      lat:37.2330, lng:127.2040 },
-    { key:'화성',      lat:37.1995, lng:127.0578 },
-    { key:'동탄',      lat:37.2100, lng:127.0710 },
-    { key:'서울',      lat:37.5665, lng:126.9780 },
+    { key:'경희대',  lat:37.5927, lng:127.0516 },
+    { key:'동대문',  lat:37.5744, lng:127.0395 },
+    { key:'수원',    lat:37.2636, lng:127.0286 },
+    { key:'영통',    lat:37.2802, lng:127.0472 },
+    { key:'광교',    lat:37.2845, lng:127.0446 },
+    { key:'권선',    lat:37.2516, lng:127.0220 },
+    { key:'장안',    lat:37.2978, lng:127.0085 },
+    { key:'팔달',    lat:37.2647, lng:127.0325 },
+    { key:'용인',    lat:37.2341, lng:127.2018 },
+    { key:'기흥',    lat:37.2751, lng:127.1149 },
+    { key:'수지',    lat:37.3219, lng:127.0973 },
+    { key:'처인',    lat:37.2330, lng:127.2040 },
+    { key:'화성',    lat:37.1995, lng:127.0578 },
+    { key:'동탄',    lat:37.2100, lng:127.0710 },
+    { key:'서울',    lat:37.5665, lng:126.9780 },
+    { key:'성남',    lat:37.4390, lng:127.1380 },
+    { key:'안산',    lat:37.3210, lng:126.8320 },
+    { key:'평택',    lat:37.0000, lng:127.0700 },
+    { key:'군포',    lat:37.3620, lng:126.9350 },
+    { key:'의왕',    lat:37.3447, lng:126.9686 },
+    { key:'하남',    lat:37.5400, lng:127.2050 },
+    { key:'오산',    lat:37.1530, lng:127.0760 },
+    { key:'시흥',    lat:37.3800, lng:126.8030 },
   ];
 
-  function geocode(addr) {
+  function geocodeFallback(addr) {
     for (const g of GEO_TABLE) {
       if (addr.includes(g.key)) return { lat: g.lat, lng: g.lng };
     }
-    return { lat: 37.5665, lng: 126.9780 };
+    return { lat: 37.2636, lng: 127.0286 }; // 수원 기본값
+  }
+
+  // Nominatim으로 주소 → 좌표 변환 (헤더 없이, 한국어 쿼리 최적화)
+  async function geocodeAddress(addr) {
+    // 1차: Nominatim (브라우저 CORS 허용)
+    try {
+      const query = encodeURIComponent(addr.replace(/\s+/g,' ').trim() + ', 대한민국');
+      const url   = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&countrycodes=kr`;
+      const ctrl  = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 5000);
+      const res   = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      const data  = await res.json();
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon);
+        if (lat > 33 && lat < 39 && lng > 124 && lng < 132) { // 한국 좌표 유효성 검사
+          console.log(`📍 Nominatim 성공: ${addr} → ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+          return { lat, lng, source: 'nominatim' };
+        }
+      }
+    } catch (e) {
+      console.warn('Nominatim 실패:', e.message);
+    }
+    // 2차: GEO_TABLE fallback
+    const fb = geocodeFallback(addr);
+    console.log(`📍 GEO_TABLE fallback: ${addr} → ${fb.lat}, ${fb.lng}`);
+    return { ...fb, source: 'fallback' };
+  }
+
+  // OSRM으로 현장 → 모든 업체 도로거리 일괄 계산
+  async function getOSRMDistances(siteLat, siteLng, vendors) {
+    try {
+      const coords   = [[siteLng, siteLat], ...vendors.map(v => [v.lng, v.lat])];
+      const coordStr = coords.map(c => c.map(x => x.toFixed(6)).join(',')).join(';');
+      // Table Service: distance 행렬 요청
+      const url = `https://router.project-osrm.org/table/v1/driving/${coordStr}?sources=0&destinations=${[...Array(vendors.length).keys()].map(i=>i+1).join(';')}&annotations=distance`;
+
+      const ctrl  = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      const res   = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      const data  = await res.json();
+
+      if (data.code === 'Ok' && data.distances && data.distances[0]) {
+        const kms = data.distances[0].map(d => (d || 0) / 1000);
+        console.log('🛣️ OSRM 도로거리:', kms.map(k => k.toFixed(1)+'km').join(', '));
+        return kms;
+      }
+      // distances 없으면 durations으로 추정 (평균 40km/h 가정)
+      if (data.code === 'Ok' && data.durations && data.durations[0]) {
+        const kms = data.durations[0].map(d => (d || 0) / 3600 * 40);
+        console.log('🛣️ OSRM 시간→거리 추정:', kms.map(k => k.toFixed(1)+'km').join(', '));
+        return kms;
+      }
+    } catch (e) {
+      console.warn('OSRM Table 실패, Route 시도:', e.message);
+    }
+
+    // OSRM Route 개별 호출 (Table 실패 시)
+    try {
+      const kms = await Promise.all(vendors.map(async v => {
+        try {
+          const url  = `https://router.project-osrm.org/route/v1/driving/${siteLng.toFixed(6)},${siteLat.toFixed(6)};${v.lng.toFixed(6)},${v.lat.toFixed(6)}?overview=false`;
+          const ctrl = new AbortController();
+          setTimeout(() => ctrl.abort(), 4000);
+          const res  = await fetch(url, { signal: ctrl.signal });
+          const data = await res.json();
+          if (data.code === 'Ok') return data.routes[0].distance / 1000;
+        } catch {}
+        return haversine(siteLat, siteLng, v.lat, v.lng); // 개별도 실패하면 직선
+      }));
+      return kms;
+    } catch (e) {
+      console.warn('OSRM Route도 실패, 하버사인 사용');
+    }
+
+    return vendors.map(v => haversine(siteLat, siteLng, v.lat, v.lng));
   }
 
   /* ── 하버사인 거리 (km) ── */
@@ -4395,16 +4928,29 @@
     }
   }
 
-  function calcScores(vendors, siteLat, siteLng, matType) {
+  function calcScores(vendors, siteLat, siteLng, matType, roadKms) {
     const W = priorityMode === 'dist'
       ? { dist: 50, price: 25, trust: 25 }
       : { dist: 20, price: 55, trust: 25 };
 
     const minPrice = Math.min(...vendors.map(v => v.price));
-    const delta    = matType === 'rebar' ? 1000 : 1;
+    // 자재별 가격 민감도 스케일 (1원 차이당 점수 차이)
+    const DELTA = {
+      rebar:      1000,    // 1,000원/ton 차이 = 1pt
+      masonry:    1,       // 1원/장 차이 = 1pt
+      concrete:   500,     // 500원/㎥ 차이 = 1pt
+      formwork:   50,      // 50원/㎡·일 차이 = 1pt
+      steel:      2000,    // 2,000원/ton 차이 = 1pt
+      insulation: 100,     // 100원/㎡ 차이 = 1pt
+      finishing:  200,     // 200원/㎡ 차이 = 1pt
+      windows:    1000,    // 1,000원/㎡ 차이 = 1pt
+    };
+    const delta = DELTA[matType] || 1;
 
-    return vendors.map(v => {
-      const km = haversine(siteLat, siteLng, v.lat, v.lng);
+    return vendors.map((v, i) => {
+      const km = (roadKms && roadKms[i] != null)
+        ? roadKms[i]
+        : haversine(siteLat, siteLng, v.lat, v.lng);
 
       const distScore  = parseFloat((W.dist  * Math.max(0, 1 - km / 100)).toFixed(1));
       const priceScore = parseFloat((Math.max(0, W.price - (v.price - minPrice) / delta)).toFixed(1));
@@ -4421,8 +4967,9 @@
   let _cachedSiteLat = null, _cachedSiteLng = null, _cachedMatType = null;
   let _orderedMaterials = [], _currentMatIdx = 0, _selectedVendors = [];
   let _rankedVendors = [], _selectedVendor = null;
+  let _vendorRoadKms = {};  // 자재타입별 OSRM 도로거리 캐시
 
-  function submitOrder() {
+  async function submitOrder() {
     const addr = document.getElementById('proj-addr').value.trim();
     const name = document.getElementById('proj-name').value.trim();
     if (!addr || !name) { alert('공사명과 현장 주소를 입력해주세요.'); return; }
@@ -4431,7 +4978,21 @@
     const blocks = document.querySelectorAll('.item-block');
     _orderedMaterials = [];
     if (blocks.length === 0) {
-      _orderedMaterials = [{ type: sc21Selected, spec: '—', qty: sc21Selected === 'rebar' ? 10 : 1000, unit: sc21Selected === 'rebar' ? 'ton' : '장' }];
+      _orderedMaterials = [{ type: sc21Selected, spec: '—',
+        qty:  sc21Selected === 'rebar' ? 10
+            : sc21Selected === 'concrete' ? 100
+            : sc21Selected === 'formwork' ? 300
+            : sc21Selected === 'steel'    ? 5
+            : sc21Selected === 'insulation' || sc21Selected === 'finishing' ? 200
+            : sc21Selected === 'windows'  ? 10 : 1000,
+        unit: sc21Selected === 'rebar'   ? 'ton'
+            : sc21Selected === 'masonry' ? '장'
+            : sc21Selected === 'concrete' ? '㎥'
+            : sc21Selected === 'formwork' ? '㎡'
+            : sc21Selected === 'steel'   ? 'ton'
+            : sc21Selected === 'insulation' || sc21Selected === 'finishing' ? '㎡'
+            : sc21Selected === 'windows' ? 'EA' : '㎡'
+      }];
     } else {
       blocks.forEach(block => {
         const title   = block.querySelector('.do-section-title')?.textContent || '';
@@ -4447,8 +5008,7 @@
 
     _currentMatIdx = 0;
     _selectedVendors = [];
-    const { lat, lng } = geocode(addr);
-    _cachedSiteLat = lat; _cachedSiteLng = lng;
+    _vendorRoadKms = {};  // 자재타입별 도로거리 캐시
 
     document.getElementById('r-site').textContent = addr.length > 16 ? addr.slice(0,16)+'…' : addr;
     document.getElementById('r-date').textContent = document.getElementById('proj-date').value || '미정';
@@ -4458,57 +5018,47 @@
     document.getElementById('pri-price').className = 'priority-card';
 
     document.getElementById('sc2-2').classList.add('hidden');
-    setTimeout(() => {
+    setTimeout(async () => {
       showScreen('sc2-3');
       triggerAnim('#sc2-3 .sc3-inner > *');
       setBackFn(goSC22FromSC23);
       document.getElementById('sc2-3').scrollTop = 0;
+
+      // Nominatim으로 주소 → 좌표 변환
+      const geoResult = await geocodeAddress(addr);
+      _cachedSiteLat = geoResult.lat;
+      _cachedSiteLng = geoResult.lng;
+      console.log(`📍 주소 변환 (${geoResult.source}):`, addr, '→', geoResult.lat, geoResult.lng);
+
       showCurrentMaterial();
     }, 300);
   }
 
-  /* OSRM 운전거리 캐시 */
-  let _drivingCache = {};
-  
-  async function fetchDrivingDistances(siteLat, siteLng, matType) {
-    _drivingCache = {};
-    try {
-      const res = await fetch(
-        `${RENDER_SERVER_URL}/api/vendors/nearby?lat=${siteLat}&lng=${siteLng}&radius_km=100&material_type=${matType}&use_driving=true`
-      );
-      if (!res.ok) throw new Error('OSRM 호출 실패');
-      const data = await res.json();
-      for (const v of (data.vendors || [])) {
-        if (v.driving_distance_km != null) {
-          _drivingCache[v.id] = {
-            driving_km: v.driving_distance_km,
-            driving_min: v.driving_duration_min,
-          };
-        }
-      }
-      console.log(`✅ 운전거리 ${Object.keys(_drivingCache).length}개 캐싱`);
-    } catch (e) {
-      console.warn('⚠️ 운전거리 가져오기 실패:', e.message);
-    }
-  }
-  
   async function showCurrentMaterial() {
-    const mat     = _orderedMaterials[_currentMatIdx];
+    const mat      = _orderedMaterials[_currentMatIdx];
     _cachedMatType = mat.type;
-    const matName = mat.type === 'rebar' ? '🔩 철근' : '🧱 조적조';
-    document.getElementById('sc3-mat-label').textContent    = matName + ' 업체를 선택해주세요 (운전거리 계산 중...)';
+    const matName  = MAT_LABEL[mat.type] || mat.type;
+    document.getElementById('sc3-mat-label').textContent    = matName + ' 업체를 선택해주세요';
     document.getElementById('sc3-mat-progress').textContent = (_currentMatIdx+1) + ' / ' + _orderedMaterials.length;
-    
-    await fetchDrivingDistances(_cachedSiteLat, _cachedSiteLng, mat.type);
-    
-    document.getElementById('sc3-mat-label').textContent = matName + ' 업체를 선택해주세요';
+
+    // 해당 자재 업체들에 대해 OSRM 도로거리 계산 (미리 캐시되지 않은 경우)
+    const vendors = VENDOR_DB[mat.type] || [];
+    if (!_vendorRoadKms[mat.type] && _cachedSiteLat && vendors.length > 0) {
+      try {
+        const kms = await getOSRMDistances(_cachedSiteLat, _cachedSiteLng, vendors);
+        _vendorRoadKms[mat.type] = kms;
+        console.log(`🛣️ OSRM 도로거리 (${mat.type}):`, kms.map(k => k.toFixed(1) + 'km').join(', '));
+      } catch(e) {
+        console.warn('OSRM 거리 계산 실패:', e);
+      }
+    }
     renderResults();
   }
 
   /* ── 결과 렌더링 (우선순위 변경 시 재호출) ── */
   function renderResults() {
     const vendors  = VENDOR_DB[_cachedMatType];
-    const ranked   = calcScores(vendors, _cachedSiteLat, _cachedSiteLng, _cachedMatType);
+    const ranked   = calcScores(vendors, _cachedSiteLat, _cachedSiteLng, _cachedMatType, _vendorRoadKms[_cachedMatType]);
 
     // 모드 배지 갱신
     const badge = document.getElementById('r-mode-badge');
@@ -4522,9 +5072,16 @@
 
     _rankedVendors = ranked;
 
-    const priceFormat = (p) => _cachedMatType === 'rebar'
-      ? (p / 10000).toFixed(1) + '만원/ton'
-      : p + '원/장';
+    const PRICE_UNIT = {
+      rebar:'원/ton', masonry:'원/장', concrete:'원/㎥',
+      formwork:'원/㎡·일', steel:'원/ton', insulation:'원/㎡',
+      finishing:'원/㎡', windows:'원/㎡'
+    };
+    const priceFormat = (p) => {
+      const unit = PRICE_UNIT[_cachedMatType] || '원';
+      if (p >= 10000) return (p / 10000).toFixed(1) + '만' + unit;
+      return p.toLocaleString() + unit;
+    };
 
     const container = document.getElementById('vendor-results');
     container.innerHTML = '';
@@ -4579,11 +5136,14 @@
         </div>
         <div class="vc-bottom">
           <div class="vc-detail">
-            <div class="vc-detail-item"><span class="vdi-label">직선거리</span><span class="vdi-val">${v.km} km</span></div>
-            ${_drivingCache[v.id] ? `<div class="vc-detail-item"><span class="vdi-label">🚚 운전거리</span><span class="vdi-val" style="color:var(--orange)">${_drivingCache[v.id].driving_km} km <span style="font-size:11px;color:var(--text-muted)">(${_drivingCache[v.id].driving_min}분)</span></span></div>` : ''}
+            <div class="vc-detail-item"><span class="vdi-label">거리</span><span class="vdi-val">${v.km} km</span></div>
             <div class="vc-detail-item"><span class="vdi-label">단가</span><span class="vdi-val">${priceFormat(v.price)}</span></div>
             <div class="vc-detail-item"><span class="vdi-label">신뢰도</span><span class="vdi-val" style="color:#facc15">${stars} ${v.rating}</span></div>
-          </div>`;
+          </div>
+          <button class="order-btn ${btnCls}" onclick="selectVendor(${i})">
+            ${rank === 1 ? (isLast ? '발주하기 →' : '선택 후 다음 →') : '선택하기'}
+          </button>
+        </div>`;
       container.appendChild(card);
     });
 
@@ -4615,8 +5175,88 @@
       document.getElementById('sc2-3').scrollTop = 0;
       showCurrentMaterial();
     } else {
-      buildOrderComplete();
+      // 모든 자재 선택 완료 → 최종 확인 페이지
+      showConfirmPage();
     }
+  }
+
+  /* ── 최종 확인 페이지 (SC2-3.5) ── */
+  function showConfirmPage() {
+    const projName = document.getElementById('proj-name').value || '—';
+    const projAddr = document.getElementById('proj-addr').value || '—';
+    const projDate = document.getElementById('proj-date').value || '—';
+
+    document.getElementById('cf-projname').textContent = projName;
+    document.getElementById('cf-projaddr').textContent = projAddr;
+    document.getElementById('cf-projdate').textContent = projDate;
+
+    // 자재·업체 확인 카드 생성
+    const list = document.getElementById('cf-items-list');
+    list.innerHTML = '';
+    let totalSupply = 0;
+
+    const PRICE_UNIT = {
+      rebar:'원/ton', masonry:'원/장', concrete:'원/㎥',
+      formwork:'원/㎡·일', steel:'원/ton', insulation:'원/㎡',
+      finishing:'원/㎡', windows:'원/㎡'
+    };
+
+    _selectedVendors.forEach((sv, i) => {
+      const qty     = sv.qty || 10;
+      const supply  = sv.price * qty;
+      totalSupply  += supply;
+      const pUnit   = PRICE_UNIT[sv.matType] || '원';
+      const mLabel  = MAT_LABEL[sv.matType] || sv.matType;
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--steel-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm)';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:14px;font-weight:700">${mLabel}</span>
+          <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted)">자재 ${i+1}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+          <div><p style="color:var(--text-muted);margin-bottom:2px">규격</p><p style="font-weight:600">${sv.spec || '—'}</p></div>
+          <div><p style="color:var(--text-muted);margin-bottom:2px">수량</p><p style="font-weight:600">${qty.toLocaleString()} ${sv.unit || ''}</p></div>
+          <div><p style="color:var(--text-muted);margin-bottom:2px">선택 업체</p><p style="font-weight:600">🏭 ${sv.name}</p></div>
+          <div><p style="color:var(--text-muted);margin-bottom:2px">단가</p><p style="font-weight:600">${sv.price.toLocaleString()}${pUnit}</p></div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--text-secondary)">소계</span>
+          <span style="font-size:15px;font-weight:700;color:var(--orange)">${supply.toLocaleString()}원</span>
+        </div>`;
+      list.appendChild(card);
+    });
+
+    document.getElementById('cf-total').textContent = totalSupply.toLocaleString() + '원';
+    document.getElementById('cf-supply-label').textContent = `공급가액 / 부가세 ${Math.round(totalSupply*0.1).toLocaleString()}원 별도`;
+
+    document.getElementById('sc2-3').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc2-3x');
+      triggerAnim('#sc2-3x .sc4-inner > *');
+      document.getElementById('back-btn').style.display = 'none';
+      document.getElementById('sc2-3x').scrollTop = 0;
+    }, 300);
+  }
+
+  function backToVendorSelect() {
+    // 마지막으로 선택한 자재부터 다시
+    _currentMatIdx = Math.max(0, _selectedVendors.length - 1);
+    _selectedVendors = _selectedVendors.slice(0, _currentMatIdx);
+    document.getElementById('sc2-3x').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc2-3');
+      document.getElementById('sc2-3').scrollTop = 0;
+      showCurrentMaterial();
+    }, 300);
+  }
+
+  function confirmAndOrder() {
+    const btn = document.getElementById('cf-confirm-btn');
+    btn.disabled = true;
+    btn.textContent = '발주 처리 중...';
+    buildOrderComplete();
   }
 
   /* ══════════════════════════════════════════
@@ -4760,13 +5400,80 @@
       container.appendChild(wrap);
     });
 
-    document.getElementById('sc2-3').classList.add('hidden');
+    document.getElementById('sc2-3x').classList.add('hidden');
     setTimeout(() => {
       showScreen('sc2-4');
       triggerAnim('#sc2-4 .sc4-inner > *');
       document.getElementById('back-btn').style.display = 'none';
       document.getElementById('sc2-4').scrollTop = 0;
+      // 발주 상태 폴링 시작 (30초마다)
+      _orderStatusIds = _selectedVendors.map((_, i) => baseNo + '-' + String(1001 + i));
+      startOrderStatusPolling();
     }, 300);
+  }
+
+  /* ── 발주 상태 추적 ── */
+  let _orderStatusIds = [];
+  let _statusPollTimer = null;
+
+  function startOrderStatusPolling() {
+    stopOrderStatusPolling();
+    _statusPollTimer = setInterval(checkOrderStatus, 30000);
+  }
+  function stopOrderStatusPolling() {
+    if (_statusPollTimer) { clearInterval(_statusPollTimer); _statusPollTimer = null; }
+  }
+
+  async function checkOrderStatus() {
+    if (!_orderStatusIds.length) return;
+    try {
+      const buyerEmail = _currentUser?.email || 'guest@baedalcheolgeun.kr';
+      const res  = await fetch(`${RENDER_SERVER_URL}/api/orders?buyer_email=${encodeURIComponent(buyerEmail)}`);
+      if (!res.ok) return;
+      const orders = await res.json();
+
+      // 현재 발주 건들의 상태 집계
+      const myOrders = orders.filter(o => _orderStatusIds.includes(o.order_no));
+      if (!myOrders.length) return;
+
+      const statuses  = myOrders.map(o => o.status);
+      const allAccepted  = statuses.every(s => ['accepted','delivering','delivered'].includes(s));
+      const allDelivered = statuses.every(s => s === 'delivered');
+
+      updateOrderStatusUI(allDelivered ? 'delivered' : allAccepted ? 'accepted' : 'pending');
+    } catch(e) { console.warn('상태 조회 실패:', e.message); }
+  }
+
+  function updateOrderStatusUI(status) {
+    const s2c = document.getElementById('step2-circle');
+    const s2l = document.getElementById('step2-label');
+    const s3c = document.getElementById('step3-circle');
+    const s3l = document.getElementById('step3-label');
+    const ln  = document.getElementById('status-line');
+    const msg = document.getElementById('order-status-msg');
+    const title = document.getElementById('sc4-complete-title');
+    const sub   = document.getElementById('sc4-complete-sub');
+
+    if (status === 'accepted' || status === 'delivering') {
+      ln.style.width = '50%';
+      s2c.style.cssText = s2c.style.cssText.replace(/background:[^;]+/, 'background:var(--orange)');
+      s2c.style.background = 'var(--orange)'; s2c.style.borderColor = 'var(--orange)'; s2c.style.color = '#fff';
+      s2l.style.color = 'var(--orange)';
+      msg.textContent = '✅ 발주가 확정되었습니다! 업체에서 납품을 준비 중입니다.';
+      msg.style.background = 'rgba(74,222,128,0.1)'; msg.style.color = '#16a34a';
+      title.textContent = '발주 확정!';
+      sub.textContent   = '업체에서 납품을 준비 중입니다. 납품 완료 시 알림을 받습니다.';
+    }
+    if (status === 'delivered') {
+      ln.style.width = '100%';
+      s3c.style.background = 'var(--orange)'; s3c.style.borderColor = 'var(--orange)'; s3c.style.color = '#fff';
+      s3l.style.color = 'var(--orange)';
+      msg.textContent = '🎉 납품이 완료되었습니다! 리뷰를 작성해주세요.';
+      msg.style.background = 'rgba(74,222,128,0.1)'; msg.style.color = '#16a34a';
+      title.textContent = '납품 완료!';
+      sub.textContent   = '자재가 현장에 납품되었습니다. 이용해 주셔서 감사합니다.';
+      stopOrderStatusPolling();
+    }
   }
 
   /* ══════════════════════════════════════════
@@ -5259,6 +5966,10 @@
       badge.innerHTML = `👤 ${_currentUser.name} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
       badge.style.display = 'inline';
     }
+    // 마이페이지 버튼 활성화
+    const mpBtn = document.getElementById('mypage-btn');
+    if (mpBtn) mpBtn.style.display = 'flex';
+
     document.getElementById('sc4-1').classList.add('hidden');
     document.getElementById('sc4-2').classList.add('hidden');
     setTimeout(() => {
@@ -5266,6 +5977,115 @@
       showHeader(true);
       triggerAnim('#modesel .ms-inner > *');
     }, 300);
+  }
+
+  /* ══════════════════════════════════════════
+     마이페이지 — 발주 현황
+  ══════════════════════════════════════════ */
+  let _prevScreen = 'modesel';
+
+  function goMyPage() {
+    _prevScreen = document.querySelector('.screen:not(.hidden)')?.id || 'modesel';
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    showScreen('sc-mypage');
+    setBackFn(() => {
+      document.getElementById('sc-mypage').classList.add('hidden');
+      setTimeout(() => showScreen(_prevScreen), 300);
+    });
+    document.getElementById('back-btn').style.display = 'flex';
+    document.getElementById('mp-username').textContent = (_currentUser?.name || '내') + '의 발주 현황';
+    refreshMyOrders();
+  }
+
+  async function refreshMyOrders() {
+    const loadEl  = document.getElementById('mp-loading');
+    const emptyEl = document.getElementById('mp-empty');
+    const listEl  = document.getElementById('mp-orders-list');
+    if (!loadEl) return;
+    loadEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+
+    const STATUS = {
+      pending:    { label:'수락 대기', color:'#E87B0C', bg:'rgba(232,123,12,0.1)', border:'rgba(232,123,12,0.3)', step:1 },
+      accepted:   { label:'발주 확정', color:'#16a34a', bg:'rgba(74,222,128,0.1)',  border:'rgba(74,222,128,0.3)',  step:2 },
+      rejected:   { label:'거절됨',    color:'#ef4444', bg:'rgba(248,113,113,0.1)', border:'rgba(248,113,113,0.3)', step:0 },
+      delivering: { label:'배송중',    color:'#386CC8', bg:'rgba(56,108,200,0.1)',  border:'rgba(56,108,200,0.3)',  step:2 },
+      delivered:  { label:'납품완료',  color:'#16a34a', bg:'rgba(74,222,128,0.1)',  border:'rgba(74,222,128,0.3)',  step:3 },
+      cancelled:  { label:'취소됨',    color:'#6B7280', bg:'rgba(107,114,128,0.1)', border:'rgba(107,114,128,0.3)', step:0 },
+    };
+    const MAT = { rebar:'🔩 철근', masonry:'🧱 조적조', concrete:'🏗️ 콘크리트',
+                  formwork:'🪵 거푸집', steel:'🔧 강재', insulation:'🌡️ 단열재',
+                  finishing:'🎨 마감재', windows:'🪟 창호·도어' };
+
+    try {
+      const email = _currentUser?.email || 'guest@baedalcheolgeun.kr';
+      const res   = await fetch(`${RENDER_SERVER_URL}/api/orders?buyer_email=${encodeURIComponent(email)}`);
+      if (!res.ok) throw new Error('서버 오류 ' + res.status);
+      const orders = await res.json();
+
+      loadEl.style.display = 'none';
+      if (!orders || orders.length === 0) { emptyEl.style.display = 'block'; return; }
+
+      document.getElementById('mp-count-total').textContent     = orders.length;
+      document.getElementById('mp-count-pending').textContent   = orders.filter(o=>o.status==='pending').length;
+      document.getElementById('mp-count-confirmed').textContent = orders.filter(o=>['accepted','delivering','delivered'].includes(o.status)).length;
+
+      const pendingCount = orders.filter(o=>o.status==='pending').length;
+      const mpBadge = document.getElementById('mypage-badge');
+      if (mpBadge && pendingCount > 0) { mpBadge.textContent = pendingCount; mpBadge.style.display = 'block'; }
+
+      orders.forEach(order => {
+        const s    = STATUS[order.status] || STATUS.pending;
+        const card = document.createElement('div');
+        card.style.cssText = `background:var(--steel-2);border:1px solid ${s.border};border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow-sm)`;
+
+        const stepBar = [1,2,3].map(n =>
+          `<div style="flex:1;height:4px;border-radius:2px;background:${n<=s.step?s.color:'var(--steel-4)'};transition:all 0.5s"></div>`
+        ).join('');
+
+        card.innerHTML = `
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                <span style="font-size:12px;font-weight:700;background:${s.bg};color:${s.color};border:1px solid ${s.border};padding:3px 10px;border-radius:100px">${s.label}</span>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace">${order.order_no||order.id?.slice(0,8)||''}</span>
+              </div>
+              <p style="font-size:15px;font-weight:700;margin-bottom:2px">${order.site_name||'—'}</p>
+              <p style="font-size:12px;color:var(--text-secondary)">${order.site_addr||'—'}</p>
+            </div>
+            ${order.status==='pending' ? `<button onclick="cancelOrder('${order.id}')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap" onmouseover="this.style.color='#ef4444';this.style.borderColor='#ef4444'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">취소</button>` : ''}
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12px;margin-bottom:14px">
+            <div><p style="color:var(--text-muted);margin-bottom:2px">자재</p><p style="font-weight:600">${MAT[order.mat_type]||order.mat_type||'—'}</p></div>
+            <div><p style="color:var(--text-muted);margin-bottom:2px">수량</p><p style="font-weight:600">${(order.qty||0).toLocaleString()} ${order.unit||''}</p></div>
+            <div><p style="color:var(--text-muted);margin-bottom:2px">총액</p><p style="font-weight:600;color:var(--orange)">${(order.total_price||0).toLocaleString()}원</p></div>
+            <div><p style="color:var(--text-muted);margin-bottom:2px">공급업체</p><p style="font-weight:600">🏭 ${order.vendor_name||'—'}</p></div>
+            <div><p style="color:var(--text-muted);margin-bottom:2px">희망납기</p><p style="font-weight:600">${order.delivery_date||'—'}</p></div>
+            <div><p style="color:var(--text-muted);margin-bottom:2px">발주일</p><p style="font-weight:600">${(order.created_at||'').slice(0,10)}</p></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">${stepBar}</div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px">
+            <span style="font-size:10px;color:${s.step>=1?s.color:'var(--text-muted)'};font-family:'JetBrains Mono',monospace">발주접수</span>
+            <span style="font-size:10px;color:${s.step>=2?s.color:'var(--text-muted)'};font-family:'JetBrains Mono',monospace">발주확정</span>
+            <span style="font-size:10px;color:${s.step>=3?s.color:'var(--text-muted)'};font-family:'JetBrains Mono',monospace">납품완료</span>
+          </div>`;
+        listEl.appendChild(card);
+      });
+
+    } catch(e) {
+      loadEl.style.display = 'none';
+      listEl.innerHTML = `<div style="text-align:center;padding:32px;background:var(--steel-2);border:1px solid var(--border);border-radius:14px"><p style="color:#ef4444;font-size:14px;font-weight:600;margin-bottom:8px">⚠️ 서버 연결 실패</p><p style="font-size:12px;color:var(--text-muted)">${e.message}</p><p style="font-size:12px;color:var(--text-muted);margin-top:4px">로그인 후 서버가 연결되면 발주 내역이 표시됩니다</p></div>`;
+    }
+  }
+
+  async function cancelOrder(orderId) {
+    if (!confirm('발주를 취소하시겠습니까?\n(이미 수락된 발주는 업체에 직접 연락하세요)')) return;
+    try {
+      const res = await fetch(`${RENDER_SERVER_URL}/api/orders/${orderId}/status?status=cancelled`, { method: 'PUT' });
+      if (res.ok) { alert('발주가 취소되었습니다.'); refreshMyOrders(); }
+      else         { alert('취소 처리 중 오류가 발생했습니다.'); }
+    } catch { alert('서버 연결 실패'); }
   }
 
   // 페이지 로드 시 세션 복원
