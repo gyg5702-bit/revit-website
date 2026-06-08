@@ -4467,12 +4467,41 @@
     }, 300);
   }
 
-  function showCurrentMaterial() {
+  /* OSRM 운전거리 캐시 */
+  let _drivingCache = {};
+  
+  async function fetchDrivingDistances(siteLat, siteLng, matType) {
+    _drivingCache = {};
+    try {
+      const res = await fetch(
+        `${RENDER_SERVER_URL}/api/vendors/nearby?lat=${siteLat}&lng=${siteLng}&radius_km=100&material_type=${matType}&use_driving=true`
+      );
+      if (!res.ok) throw new Error('OSRM 호출 실패');
+      const data = await res.json();
+      for (const v of (data.vendors || [])) {
+        if (v.driving_distance_km != null) {
+          _drivingCache[v.id] = {
+            driving_km: v.driving_distance_km,
+            driving_min: v.driving_duration_min,
+          };
+        }
+      }
+      console.log(`✅ 운전거리 ${Object.keys(_drivingCache).length}개 캐싱`);
+    } catch (e) {
+      console.warn('⚠️ 운전거리 가져오기 실패:', e.message);
+    }
+  }
+  
+  async function showCurrentMaterial() {
     const mat     = _orderedMaterials[_currentMatIdx];
     _cachedMatType = mat.type;
     const matName = mat.type === 'rebar' ? '🔩 철근' : '🧱 조적조';
-    document.getElementById('sc3-mat-label').textContent    = matName + ' 업체를 선택해주세요';
+    document.getElementById('sc3-mat-label').textContent    = matName + ' 업체를 선택해주세요 (운전거리 계산 중...)';
     document.getElementById('sc3-mat-progress').textContent = (_currentMatIdx+1) + ' / ' + _orderedMaterials.length;
+    
+    await fetchDrivingDistances(_cachedSiteLat, _cachedSiteLng, mat.type);
+    
+    document.getElementById('sc3-mat-label').textContent = matName + ' 업체를 선택해주세요';
     renderResults();
   }
 
@@ -4550,14 +4579,11 @@
         </div>
         <div class="vc-bottom">
           <div class="vc-detail">
-            <div class="vc-detail-item"><span class="vdi-label">거리</span><span class="vdi-val">${v.km} km</span></div>
+            <div class="vc-detail-item"><span class="vdi-label">직선거리</span><span class="vdi-val">${v.km} km</span></div>
+            ${_drivingCache[v.id] ? `<div class="vc-detail-item"><span class="vdi-label">🚚 운전거리</span><span class="vdi-val" style="color:var(--orange)">${_drivingCache[v.id].driving_km} km <span style="font-size:11px;color:var(--text-muted)">(${_drivingCache[v.id].driving_min}분)</span></span></div>` : ''}
             <div class="vc-detail-item"><span class="vdi-label">단가</span><span class="vdi-val">${priceFormat(v.price)}</span></div>
             <div class="vc-detail-item"><span class="vdi-label">신뢰도</span><span class="vdi-val" style="color:#facc15">${stars} ${v.rating}</span></div>
-          </div>
-          <button class="order-btn ${btnCls}" onclick="selectVendor(${i})">
-            ${rank === 1 ? (isLast ? '발주하기 →' : '선택 후 다음 →') : '선택하기'}
-          </button>
-        </div>`;
+          </div>`;
       container.appendChild(card);
     });
 
