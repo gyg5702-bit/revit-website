@@ -5990,7 +5990,7 @@
   }
 
   async function doLogin() {
-    const email = document.getElementById('s-email').value.trim();
+    const email = document.getElementById('l-email').value.trim().toLowerCase();
     const pw    = document.getElementById('l-pw').value;
     if (!email || !pw) { alert('이메일과 비밀번호를 입력해주세요.'); return; }
     const btn = document.querySelector('#sc4-1 .submit-btn');
@@ -6045,7 +6045,7 @@
   async function doSignup() {
     const name  = document.getElementById('s-name').value.trim();
     const org   = document.getElementById('s-org').value.trim();
-    const email = document.getElementById('s-email').value.trim();
+    const email = document.getElementById('s-email').value.trim().toLowerCase();
     const pw    = document.getElementById('s-pw').value;
     const pw2   = document.getElementById('s-pw2').value;
     if (!name || !email || !pw) { alert('필수 항목(*)을 모두 입력해주세요.'); return; }
