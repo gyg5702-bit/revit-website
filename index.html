@@ -5590,7 +5590,7 @@
     setTimeout(() => showScreen('sc4-0'), 300);
   }
   async function doVendorLogin() {
-    const email = document.getElementById('v-email').value.trim();
+    const email = document.getElementById('v-email').value.trim().toLowerCase();
     const pw    = document.getElementById('v-pw').value;
     if (!email || !pw) {
       const e = document.getElementById('vendor-login-error');
@@ -5661,7 +5661,7 @@
 
   function doVendorSignup() {
     const company = document.getElementById('v-company').value.trim();
-    const email   = document.getElementById('vs-email').value.trim();
+    const email   = document.getElementById('vs-email').value.trim().toLowerCase();
     const pw      = document.getElementById('vs-pw').value;
     const pw2     = document.getElementById('vs-pw2').value;
     if (!company || !email || !pw) { alert('필수 항목(*)을 모두 입력해주세요.'); return; }
