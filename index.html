@@ -4552,6 +4552,14 @@
     document.getElementById('sc32-content').style.display = 'none';
     document.getElementById('sc32-error').style.display   = 'none';
 
+    // [추가] 발주 추천은 로그인 필요 — 안 했으면 명확히 안내
+    if (!getAuth() || !getAuth().token) {
+      document.getElementById('sc32-loading').style.display = 'none';
+      document.getElementById('sc32-error').style.display   = 'block';
+      document.getElementById('sc32-error-msg').textContent = '발주하려면 먼저 로그인해주세요. (구매자 로그인 후 다시 시도)';
+      return;
+    }
+
     // 프로젝트 ID 결정 — _bimPayload에서
     const payload = _bimPayload || {};
     const projectId = (payload.project && payload.project.project_id) || 'P001';
@@ -4565,6 +4573,22 @@
     ));
 
     try {
+      // [추가] 불러온 JSON을 서버에 먼저 업로드 — 이걸 안 하면 recommend가 404(프로젝트 없음)로 실패
+      const upRes = await apiFetch('/api/revit/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: projectId,
+          project_name: (payload.project && payload.project.name) || projectId,
+          payload: payload,
+          summary: '웹에서 불러온 BIM 데이터',
+        }),
+      });
+      if (!upRes.ok) {
+        const ut = await upRes.text();
+        throw new Error(`BIM 서버 업로드 실패 HTTP ${upRes.status}: ${ut.slice(0, 150)}`);
+      }
+
       const res = await apiFetch(`/api/projects/${encodeURIComponent(projectId)}/recommend`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -4599,7 +4623,7 @@
     container.innerHTML = '';
 
     if (recoState.recommendations.length === 0) {
-      container.innerHTML = '<div class="bim-error"><div class="bim-error-icon">📭</div><p class="bim-error-msg">발주 대상 자재가 없습니다</p></div>';
+      container.innerHTML = '<div class="bim-error"><div class="bim-error-icon">📭</div><p class="bim-error-msg">발주 가능한 업체가 없습니다.<br>이 BIM JSON에 업체·단가(vendors, vendor_prices) 정보가 들어있는지 확인하세요.</p></div>';
       document.getElementById('sc32-loading').style.display = 'none';
       document.getElementById('sc32-content').style.display = 'block';
       return;
