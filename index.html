@@ -194,6 +194,28 @@
   #modesel {
     padding: 80px 2rem 60px;
     overflow-y: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  /* 내용이 길어질 수 있는 화면들도 동일하게 상단정렬 + 헤더 여백 (위쪽 잘림 방지) */
+  #sc-mypage, #sc2-3x {
+    padding: 80px 2rem 60px;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  /* 로그인 계정 선택 — 짧은 화면이라 화면 정중앙 정렬 */
+  #sc4-0 {
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 2rem;
+  }
+  /* 패딩은 각자 유지하고 스크롤·상단정렬만 보강 */
+  #sc3-2, #sc3-3, #sc-upload {
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 
   /* header (only visible on screen 2) */
@@ -1728,7 +1750,7 @@
         </span>
       </div>
 
-      <div class="mode-card card-bim" onclick="fetchBIMData()">
+      <div class="mode-card card-bim" onclick="startBIMFlow()">
         <div class="card-icon">🏗️</div>
         <span class="card-tag">MODE 02 — BIM 연동</span>
         <div class="card-title">Revit 데이터로<br>자동 발주하기</div>
@@ -1773,6 +1795,111 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     MODE 02 (재구성) — 프로젝트 선택 → 자재·층 선택
+══════════════════════════════════ -->
+<style>
+  /* 긴 목록이 화면보다 커질 때 위쪽이 잘리지 않도록 상단정렬 + 헤더(56px) 여백
+     — 기존 #sc2-4 / #sc3-1 등과 동일한 규칙 */
+  #sc-bim-proj, #sc-bim-mat {
+    padding: 80px 2rem 60px;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .bim2-wrap { max-width: 860px; width: 100%; margin: 0 auto; }
+  .bim2-label { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:1px; color:var(--orange); text-transform:uppercase; margin-bottom:10px; }
+  .bim2-title { font-size:26px; font-weight:800; color:var(--text-primary); line-height:1.25; margin-bottom:8px; }
+  .bim2-title em { color:var(--orange); font-style:normal; }
+  .bim2-sub { font-size:14px; color:var(--text-secondary); margin-bottom:22px; line-height:1.6; }
+  .bim2-panel { background:var(--steel-2); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow-sm); }
+  .bim2-panel-title { font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  .bim2-proj-card { display:flex; align-items:center; gap:14px; background:var(--steel-2); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-bottom:10px; cursor:pointer; transition:.15s; box-shadow:var(--shadow-sm); }
+  .bim2-proj-card:hover { border-color:var(--orange); transform:translateY(-1px); box-shadow:var(--shadow); }
+  .bim2-proj-ico { width:42px; height:42px; flex:0 0 42px; border-radius:10px; background:var(--orange-dim); display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .bim2-proj-name { font-size:15px; font-weight:700; color:var(--text-primary); }
+  .bim2-proj-meta { font-size:12px; color:var(--text-secondary); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+  .bim2-file-btn { display:inline-flex; align-items:center; gap:8px; margin-top:16px; padding:11px 16px; border:1px dashed var(--border-hover); border-radius:10px; background:var(--steel-3); color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; transition:.15s; }
+  .bim2-file-btn:hover { border-color:var(--orange); color:var(--orange); }
+  .bim2-grid { display:grid; grid-template-columns:1.55fr 1fr; gap:16px; }
+  @media (max-width:720px){ .bim2-grid { grid-template-columns:1fr; } }
+  .bim2-row { display:grid; grid-template-columns:auto minmax(70px,1fr) minmax(150px,210px); align-items:center; gap:10px; padding:11px 4px; border-bottom:1px solid var(--border); }
+  .bim2-row:last-child { border-bottom:none; }
+  .bim2-row.disabled { opacity:.45; }
+  .bim2-row label { display:flex; align-items:center; gap:9px; font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; }
+  .bim2-row.disabled label { cursor:not-allowed; }
+  .bim2-row input[type=checkbox]{ width:17px; height:17px; accent-color:var(--orange); cursor:pointer; }
+  .bim2-floor { font-size:13px; padding:7px 9px; border:1px solid var(--border); border-radius:8px; background:var(--steel-2); color:var(--text-primary); font-family:'Noto Sans KR',sans-serif; }
+  .bim2-floor:disabled { background:var(--steel-3); color:var(--text-muted); }
+  .bim2-qty { text-align:right; font-size:13px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--text-secondary); }
+  .bim2-qty.on { color:var(--orange); }
+  .bim2-guide { font-size:12.5px; color:var(--text-secondary); line-height:1.9; }
+  .bim2-guide b { color:var(--text-primary); }
+  .bim2-prev-tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .bim2-prev-tbl th { text-align:left; padding:7px 8px; color:var(--text-secondary); font-weight:600; border-bottom:1px solid var(--border); background:var(--steel-3); }
+  .bim2-prev-tbl td { padding:8px; border-bottom:1px solid var(--border); }
+  .bim2-prev-tbl td.num { text-align:right; font-family:'JetBrains Mono',monospace; font-weight:600; }
+  .bim2-prev-empty { padding:18px; text-align:center; color:var(--text-muted); font-size:13px; }
+</style>
+
+<div class="screen hidden" id="sc-bim-proj">
+  <div class="ms-inner bim2-wrap">
+    <p class="bim2-label">// MODE 02 — BIM 연동 발주 · 1단계</p>
+    <h1 class="bim2-title">프로젝트를 <em>선택</em>하세요</h1>
+    <p class="bim2-sub">발주할 BIM 프로젝트를 고르거나, Revit·BuildingCheck에서 내보낸 자재정보 JSON 파일을 불러옵니다.</p>
+
+    <div class="bim2-panel">
+      <div class="bim2-panel-title">프로젝트 목록</div>
+      <div id="bimproj-loading" style="padding:18px;text-align:center;color:var(--text-muted);font-size:13px">불러오는 중…</div>
+      <div id="bimproj-list"></div>
+      <div id="bimproj-empty" style="display:none;padding:16px;text-align:center;color:var(--text-secondary);font-size:13px;line-height:1.6"></div>
+
+      <label class="bim2-file-btn">
+        📂 JSON 파일로 불러오기
+        <input type="file" accept=".json,application/json" onchange="bimHandleProjectJSON(this)" style="display:none">
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="screen hidden" id="sc-bim-mat">
+  <div class="ms-inner bim2-wrap">
+    <p class="bim2-label">// MODE 02 · 2단계 — 자재·층 선택</p>
+    <h1 class="bim2-title">자재와 <em>층</em>을 선택하세요</h1>
+    <p class="bim2-sub" id="bimmat-proj">JSON에서 읽은 물량을 자재별로 확인하고, 발주할 층을 지정하세요.</p>
+
+    <div class="bim2-grid">
+      <div class="bim2-panel">
+        <div class="bim2-panel-title">자재 선택 — 자재마다 층을 따로 지정 가능</div>
+        <div id="bimmat-rows"></div>
+        <button onclick="bimSelectAll()" style="margin-top:14px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--steel-3);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif">데이터 있는 자재 전체 선택</button>
+      </div>
+
+      <div class="bim2-panel">
+        <div class="bim2-panel-title">옵션 · 안내</div>
+        <div class="bim2-guide">
+          ■ 자재마다 우측에서 <b>층을 개별 지정</b><br>
+          ■ <b>(전체)</b> = 그 자재의 모든 층 합산<br>
+          ■ 체크한 자재만 <b>업체 추천</b>으로 넘어갑니다<br>
+          ■ JSON에 물량이 없는 자재는 <b>비활성화</b>됩니다<br>
+          ■ 철근·조적은 발주내역, 콘크리트·거푸집은 벽체 물량 기준
+        </div>
+      </div>
+    </div>
+
+    <div class="bim2-panel" style="margin-top:16px">
+      <div class="bim2-panel-title">추출 결과 미리보기</div>
+      <table class="bim2-prev-tbl">
+        <thead><tr><th>자재</th><th>층</th><th style="text-align:right">수량</th><th>단위</th></tr></thead>
+        <tbody id="bimmat-preview-body"></tbody>
+      </table>
+      <div id="bimmat-preview-empty" class="bim2-prev-empty">자재를 체크하면 추출 물량이 표시됩니다.</div>
+    </div>
+
+    <button class="submit-btn" onclick="bimProceedToRecommend()" style="margin-top:18px">업체 추천 받기 →</button>
   </div>
 </div>
 
@@ -1873,7 +2000,7 @@
         </div>
         <div class="field-wrap full">
           <label class="field-label">현장 주소 <span style="color:var(--text-muted);font-size:11px">(거리 기반 업체 추천에 사용)</span></label>
-          <input class="field-input" type="text" id="proj-addr" placeholder="예) 서울시 동대문구 회기동">
+          <input class="field-input" type="text" id="proj-addr" placeholder="예) 경기도 용인시 기흥구 덕영대로 1732">
         </div>
         <div class="field-wrap">
           <label class="field-label">희망 납기일</label>
@@ -3885,6 +4012,307 @@
   ══════════════════════════════════════════ */
   let _bimPayload = null; // 불러온 BIM 데이터 저장
 
+  /* ══════════════════════════════════════════
+     MODE 02 (재구성) — 프로젝트 선택 → 자재·층 선택 → 점수 기반 업체 추천
+     ══════════════════════════════════════════ */
+  // 카테고리 정의: src = 물량 추출 방식
+  //   order = order_items(material_code 접두사 매칭, 층별)
+  //   vol   = elements 벽체 체적 = Σ(areaM2 × thicknessMm/1000)
+  //   area  = elements 벽체 면적 = Σ(areaM2)
+  //   none  = JSON에 물량 없음 → 비활성화
+  const BIM_CATS = [
+    { type:'rebar',      label:'🔩 철근',      unit:'ton', src:'order', match: c => c.startsWith('RC-BAR') },
+    { type:'concrete',   label:'🏗️ 콘크리트',  unit:'㎥',  src:'vol' },
+    { type:'formwork',   label:'🪵 거푸집',    unit:'㎡',  src:'area' },
+    { type:'masonry',    label:'🧱 조적',      unit:'매',  src:'order', match: c => c.startsWith('MS-') },
+    { type:'steel',      label:'🔧 강재',      unit:'ton', src:'none' },
+    { type:'insulation', label:'🌡️ 단열재',   unit:'㎡',  src:'none' },
+    { type:'finishing',  label:'🎨 마감재',    unit:'㎡',  src:'none' },
+    { type:'windows',    label:'🪟 창호·도어', unit:'EA',  src:'none' },
+  ];
+  let _bimExtract = {};  // type → { unit, floors:{floor:qty}, total }
+
+  function bimRoundQty(q) {
+    if (q >= 100) return Math.round(q);
+    return Math.round(q * 1000) / 1000;  // 소수 3자리
+  }
+  function bimFmtQty(q) {
+    return (q % 1 === 0) ? q.toLocaleString() : q.toFixed(3);
+  }
+
+  // MODE 02 카드 → 프로젝트 선택 화면
+  function startBIMFlow() {
+    document.getElementById('modesel').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc-bim-proj');
+      showHeader(true);
+      setBackFn(() => {
+        document.getElementById('sc-bim-proj').classList.add('hidden');
+        setTimeout(() => { showScreen('modesel'); triggerAnim('#modesel .ms-inner > *'); }, 300);
+      });
+      document.getElementById('sc-bim-proj').scrollTop = 0;
+      loadBIMProjectList();
+    }, 300);
+  }
+
+  async function loadBIMProjectList() {
+    const loading = document.getElementById('bimproj-loading');
+    const listEl  = document.getElementById('bimproj-list');
+    const emptyEl = document.getElementById('bimproj-empty');
+    loading.style.display = 'block';
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'none';
+    try {
+      const res = await apiFetch('/api/revit/data');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const list = await res.json();
+      loading.style.display = 'none';
+      if (!Array.isArray(list) || list.length === 0) {
+        emptyEl.style.display = 'block';
+        emptyEl.textContent = '서버에 저장된 프로젝트가 없습니다. 아래에서 JSON 파일을 불러오세요.';
+        return;
+      }
+      list.forEach(p => {
+        const id    = p.project_id || p.id || '';
+        const name  = p.name || p.project_name || id || '이름 없는 프로젝트';
+        const lv    = p.level_count != null ? p.level_count + '개 층' : '';
+        const el    = p.element_count != null ? p.element_count.toLocaleString() + '개 부재' : '';
+        const when  = (p.last_ingested_at || p.exported_at || '').toString().replace('T',' ').slice(0,16);
+        const card  = document.createElement('div');
+        card.className = 'bim2-proj-card';
+        card.onclick = () => selectBIMProject(id);
+        card.innerHTML =
+          '<div class="bim2-proj-ico">🏗️</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div class="bim2-proj-name">' + escapeHtml(name) + '</div>' +
+            '<div class="bim2-proj-meta">' + escapeHtml([id, lv, el, when].filter(Boolean).join(' · ')) + '</div>' +
+          '</div>' +
+          '<div style="color:var(--text-muted);font-size:18px">→</div>';
+        listEl.appendChild(card);
+      });
+    } catch (e) {
+      loading.style.display = 'none';
+      emptyEl.style.display = 'block';
+      emptyEl.textContent = '서버 프로젝트를 불러오지 못했습니다. JSON 파일로 불러오세요. (' + e.message + ')';
+    }
+  }
+
+  async function selectBIMProject(projectId) {
+    const loading = document.getElementById('bimproj-loading');
+    loading.style.display = 'block';
+    loading.textContent = '프로젝트 데이터를 불러오는 중…';
+    try {
+      const res = await apiFetch('/api/revit/data/' + encodeURIComponent(projectId));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const detail = await res.json();
+      const payload = (detail && detail.payload)
+        ? (typeof detail.payload === 'string' ? JSON.parse(detail.payload) : detail.payload)
+        : detail;
+      _bimPayload = payload;
+      enterBIMMaterialScreen();
+    } catch (e) {
+      loading.style.display = 'block';
+      loading.textContent = '불러오기 실패: ' + e.message;
+    }
+  }
+
+  // 로컬 JSON 파일 → 프로젝트로 사용
+  function bimHandleProjectJSON(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (!file.name.endsWith('.json')) { alert('JSON 파일만 불러올 수 있습니다.'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        _bimPayload = JSON.parse(e.target.result);
+        enterBIMMaterialScreen();
+      } catch (err) {
+        alert('JSON 파싱 오류: ' + err.message);
+      }
+    };
+    reader.onerror = () => alert('파일 읽기에 실패했습니다.');
+    reader.readAsText(file);
+  }
+
+  // JSON → 자재×층 물량 추출
+  function computeBIMExtract() {
+    const p     = _bimPayload || {};
+    const els   = p.elements || [];
+    const items = p.order_items || [];
+    _bimExtract = {};
+    BIM_CATS.forEach(cat => {
+      const floors = {};
+      if (cat.src === 'order') {
+        items.forEach(it => {
+          if (it.material_code && cat.match(it.material_code)) {
+            const f = it.revit_floor || '(미지정)';
+            floors[f] = (floors[f] || 0) + (it.quantity_ordered || 0);
+          }
+        });
+      } else if (cat.src === 'area' || cat.src === 'vol') {
+        els.forEach(e => {
+          const sp   = e.spec || {};
+          const area = (sp.areaM2 != null) ? sp.areaM2
+                     : (e.raw_unit === '㎡' ? (e.raw_quantity || 0) : 0);
+          if (!area) return;
+          const f   = e.level || '(미지정)';
+          const val = (cat.src === 'vol') ? area * ((sp.thicknessMm || 0) / 1000) : area;
+          floors[f] = (floors[f] || 0) + val;
+        });
+      }
+      const total = Object.values(floors).reduce((a, b) => a + b, 0);
+      _bimExtract[cat.type] = { unit: cat.unit, floors, total };
+    });
+  }
+
+  function enterBIMMaterialScreen() {
+    computeBIMExtract();
+    document.getElementById('sc-bim-proj').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc-bim-mat');
+      showHeader(true);
+      setBackFn(() => {
+        document.getElementById('sc-bim-mat').classList.add('hidden');
+        setTimeout(() => { showScreen('sc-bim-proj'); loadBIMProjectList(); }, 300);
+      });
+      document.getElementById('sc-bim-mat').scrollTop = 0;
+      renderBIMMaterialScreen();
+    }, 300);
+  }
+
+  function renderBIMMaterialScreen() {
+    const proj = (_bimPayload && _bimPayload.project) || {};
+    document.getElementById('bimmat-proj').textContent =
+      (proj.name || 'BIM 프로젝트') + ' — JSON에서 읽은 물량을 자재별로 확인하고, 발주할 층을 지정하세요.';
+
+    const rows = document.getElementById('bimmat-rows');
+    rows.innerHTML = '';
+    BIM_CATS.forEach(cat => {
+      const ex       = _bimExtract[cat.type] || { unit: cat.unit, floors: {}, total: 0 };
+      const hasData  = ex.total > 0;
+      const floorKeys = Object.keys(ex.floors);
+      const defChecked = hasData && (cat.type === 'rebar' || cat.type === 'concrete');
+
+      let opts = '<option value="__ALL__">(전체)</option>';
+      floorKeys.forEach(f => {
+        opts += `<option value="${escapeHtml(f)}">${escapeHtml(f)} · ${bimFmtQty(bimRoundQty(ex.floors[f]))}${escapeHtml(ex.unit)}</option>`;
+      });
+
+      const row = document.createElement('div');
+      row.className = 'bim2-row' + (hasData ? '' : ' disabled');
+      row.innerHTML =
+        `<input type="checkbox" data-type="${cat.type}" ${defChecked ? 'checked' : ''} ${hasData ? '' : 'disabled'} onchange="bimRowToggle(this)">` +
+        `<label>${cat.label}${hasData ? '' : ' <span style="font-size:11px;color:var(--text-muted);font-weight:500">· 데이터 없음</span>'}</label>` +
+        `<select class="bim2-floor" data-type="${cat.type}" ${(hasData && defChecked) ? '' : 'disabled'} onchange="bimUpdatePreview()">${opts}</select>`;
+      // qty 표시 칸을 select 뒤에 추가
+      rows.appendChild(row);
+    });
+
+    bimUpdatePreview();
+  }
+
+  function bimRowToggle(cb) {
+    const sel = document.querySelector(`select[data-type="${cb.dataset.type}"]`);
+    if (sel) sel.disabled = !cb.checked;
+    bimUpdatePreview();
+  }
+
+  function bimSelectAll() {
+    document.querySelectorAll('#bimmat-rows input[type=checkbox]').forEach(cb => {
+      if (!cb.disabled) {
+        cb.checked = true;
+        const sel = document.querySelector(`select[data-type="${cb.dataset.type}"]`);
+        if (sel) sel.disabled = false;
+      }
+    });
+    bimUpdatePreview();
+  }
+
+  // 현재 선택 상태 → 추출 결과 미리보기
+  function bimGetSelections() {
+    const out = [];
+    BIM_CATS.forEach(cat => {
+      const cb = document.querySelector(`#bimmat-rows input[data-type="${cat.type}"]`);
+      if (!cb || !cb.checked || cb.disabled) return;
+      const sel   = document.querySelector(`select[data-type="${cat.type}"]`);
+      const floor = sel ? sel.value : '__ALL__';
+      const ex    = _bimExtract[cat.type];
+      const qty   = (floor === '__ALL__') ? ex.total : (ex.floors[floor] || 0);
+      if (qty > 0) {
+        out.push({
+          type:  cat.type,
+          label: cat.label,
+          spec:  floor === '__ALL__' ? '전체 층' : floor,
+          qty:   bimRoundQty(qty),
+          unit:  ex.unit,
+        });
+      }
+    });
+    return out;
+  }
+
+  function bimUpdatePreview() {
+    const sels  = bimGetSelections();
+    const body  = document.getElementById('bimmat-preview-body');
+    const empty = document.getElementById('bimmat-preview-empty');
+    body.innerHTML = '';
+    if (sels.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    sels.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        `<td>${s.label}</td>` +
+        `<td>${escapeHtml(s.spec)}</td>` +
+        `<td class="num">${bimFmtQty(s.qty)}</td>` +
+        `<td>${escapeHtml(s.unit)}</td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  // 선택 확정 → 점수 기반 업체 추천(SC2-3)으로 합류
+  function bimProceedToRecommend() {
+    const sels = bimGetSelections();
+    if (sels.length === 0) { alert('물량이 있는 자재를 1개 이상 선택해주세요.'); return; }
+
+    _orderedMaterials = sels.map(s => ({
+      type: s.type,
+      spec: s.spec,
+      qty:  s.qty,
+      unit: s.unit,
+      days: s.type === 'formwork' ? 30 : null,  // 거푸집 기본 임대 30일
+    }));
+    _currentMatIdx   = 0;
+    _selectedVendors = [];
+    _vendorRoadKms   = {};
+
+    // 프로젝트 정보 → 발주서 입력 필드 채우기
+    const proj = (_bimPayload && _bimPayload.project) || {};
+    document.getElementById('proj-name').value = proj.name || 'BIM 프로젝트';
+    document.getElementById('proj-addr').value = '경기도 수원시';   // 기본 납품지(업체군 기준)
+    const d = new Date(); d.setDate(d.getDate() + 7);
+    document.getElementById('proj-date').value = d.toISOString().split('T')[0];
+
+    // 납품지 좌표(수원 기준) — 거리 점수 계산용
+    _cachedSiteLat = 37.2636;
+    _cachedSiteLng = 127.0286;
+
+    document.getElementById('sc-bim-mat').classList.add('hidden');
+    setTimeout(() => {
+      showScreen('sc2-3');
+      showHeader(true);
+      triggerAnim('#sc2-3 .sc3-inner > *');
+      setBackFn(() => {
+        document.getElementById('sc2-3').classList.add('hidden');
+        setTimeout(() => { showScreen('sc-bim-mat'); renderBIMMaterialScreen(); }, 300);
+      });
+      document.getElementById('sc2-3').scrollTop = 0;
+      showCurrentMaterial();
+    }, 300);
+  }
+
   // MODE 02 카드 클릭 → SC3-1 진입 + 데이터 fetch
   async function fetchBIMData() {
     // modesel → sc3-1
@@ -4206,7 +4634,7 @@
         const weaknesses = Array.isArray(v.weaknesses) ? v.weaknesses : [];
 
         html += `
-          <div class="vendor-card ${isSelected ? 'selected' : ''}" onclick="selectVendor('${escapeHtml(r.material_code)}','${escapeHtml(v.vendor_id)}')">
+          <div class="vendor-card ${isSelected ? 'selected' : ''}" onclick="selectVendorRec('${escapeHtml(r.material_code)}','${escapeHtml(v.vendor_id)}')">
             <div class="v-radio"></div>
             <div class="v-name">
               ${escapeHtml(v.vendor_name || v.vendor_id)}
@@ -4239,7 +4667,7 @@
     document.getElementById('sc32-content').style.display = 'block';
   }
 
-  function selectVendor(materialCode, vendorId) {
+  function selectVendorRec(materialCode, vendorId) {
     const rec = recoState.recommendations.find(r => r.material_code === materialCode);
     if (!rec) return;
     const vendor = (rec.vendors || []).find(v => v.vendor_id === vendorId);
@@ -5131,6 +5559,14 @@
     const container = document.getElementById('vendor-results');
     container.innerHTML = '';
 
+    // 예상 금액 계산용 — 현재 자재의 수량/임대일수
+    const _curMat = _orderedMaterials[_currentMatIdx] || {};
+    const _estQty  = _curMat.qty  || 0;
+    const _estDays = _curMat.days || 1;
+    const _fmtEst = (n) => n >= 1e8 ? (n/1e8).toFixed(2) + '억원'
+                         : n >= 1e4 ? Math.round(n).toLocaleString() + '원'
+                         : Math.round(n).toLocaleString() + '원';
+
     ranked.forEach((v, i) => {
       const rank = i + 1;
       const rankClass  = rank === 1 ? 'rank1' : '';
@@ -5142,6 +5578,7 @@
       const pricePct   = Math.round(v.priceScore / W.price * 100);
       const trustPct   = Math.round(v.trustScore / W.trust * 100);
       const stars      = '★'.repeat(Math.round(v.rating)) + '☆'.repeat(5 - Math.round(v.rating));
+      const estTotal   = _cachedMatType === 'formwork' ? v.price * _estQty * _estDays : v.price * _estQty;
 
       const card = document.createElement('div');
       card.className = `vendor-card ${rankClass}`;
@@ -5160,6 +5597,7 @@
           <div class="vc-score-wrap">
             <div class="vc-score ${scoreCls}">${v.total}</div>
             <div class="vc-score-label">/ 100점</div>
+            <div class="vc-est" style="margin-top:5px;font-size:12px;font-weight:800;color:var(--orange);white-space:nowrap;font-family:'JetBrains Mono',monospace">≈ ${_fmtEst(estTotal)}</div>
           </div>
         </div>
         <div class="score-bars">
@@ -5604,28 +6042,26 @@
     btn.innerHTML = '로그인 중…'; btn.disabled = true;
     
     try {
-      // 백엔드에서 판매자 프로필 조회
-      const res = await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(email)}`);
-      if (!res.ok) throw new Error('서버 응답 오류 ' + res.status);
-      const data = await res.json();
-      
-      // 가입 안 됨
-      if (!data.exists) {
-        errDiv.textContent = '⚠️ 회원 정보가 없습니다. 판매자 등록을 먼저 해주세요.';
+      // 백엔드에서 이메일+비밀번호로 실제 인증 (POST /api/vendor/login, SHA-256 검증)
+      const res = await fetch(`${RENDER_SERVER_URL}/api/vendor/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pw })
+      });
+
+      // 401 = 이메일 없음 또는 비밀번호 불일치
+      if (res.status === 401) {
+        let detail = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        try { const j = await res.json(); if (j.detail) detail = String(j.detail); } catch {}
+        errDiv.textContent = '⚠️ ' + detail;
         errDiv.style.display = 'block';
         document.getElementById('v-email').style.borderColor = '#FECACA';
         document.getElementById('v-pw').style.borderColor    = '#FECACA';
         return;
       }
-      
-      // 시연용: 비밀번호는 길이 8자 이상만 체크 (백엔드에 비밀번호 컬럼 없음)
-      // 본격 인증 원하면 옵션 A로 통합 필요
-      if (pw.length < 8) {
-        errDiv.textContent = '⚠️ 비밀번호가 올바르지 않습니다.';
-        errDiv.style.display = 'block';
-        return;
-      }
-      
+      if (!res.ok) throw new Error('서버 응답 오류 ' + res.status);
+      const data = await res.json();
+
       // 로그인 성공 - 백엔드 데이터로 _currentVendor 초기화
       _currentVendor = {
         company: data.company,
