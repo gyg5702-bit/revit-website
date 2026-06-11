@@ -6182,7 +6182,7 @@
     }
   }
 
-  function doVendorSignup() {
+  async function doVendorSignup() {
     const company = document.getElementById('v-company').value.trim();
     const email   = document.getElementById('vs-email').value.trim().toLowerCase();
     const pw      = document.getElementById('vs-pw').value;
@@ -6190,32 +6190,52 @@
     if (!company || !email || !pw) { alert('필수 항목(*)을 모두 입력해주세요.'); return; }
     if (pw !== pw2) { alert('비밀번호가 일치하지 않습니다.'); return; }
     if (pw.length < 8) { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
-    _currentVendor = {
-      company, email,
-      addr:         document.getElementById('v-addr').value,
-      tel:          document.getElementById('v-tel').value,
-      bizno:        document.getElementById('v-bizno').value,
-      rebar_price:  document.getElementById('v-price-rebar').value,
-      mas_price:    document.getElementById('v-price-masonry').value,
-      rebar_stock:  document.getElementById('v-stock-rebar').value,
-      mas_stock:    document.getElementById('v-stock-masonry').value,
+
+    const num = (id) => parseFloat(document.getElementById(id).value) || null;
+    const payload = {
+      email, password: pw, company,
+      addr:        document.getElementById('v-addr').value,
+      tel:         document.getElementById('v-tel').value,
+      bizno:       document.getElementById('v-bizno').value,
+      rebar_price: num('v-price-rebar'),
+      mas_price:   num('v-price-masonry'),
+      rebar_stock: num('v-stock-rebar'),
+      mas_stock:   num('v-stock-masonry'),
     };
-    // 서버에 프로필 저장 시도
-    fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(email)}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        company, addr: _currentVendor.addr, tel: _currentVendor.tel,
-        bizno: _currentVendor.bizno,
-        rebar_price: parseFloat(_currentVendor.rebar_price) || null,
-        mas_price:   parseFloat(_currentVendor.mas_price)   || null,
-        rebar_stock: parseFloat(_currentVendor.rebar_stock) || null,
-        mas_stock:   parseFloat(_currentVendor.mas_stock)   || null,
-      })
-    }).catch(() => {}); // 실패해도 계속
-    alert('판매자 등록이 완료되었습니다!');
-    document.getElementById('sc5-2').classList.add('hidden');
-    setTimeout(() => afterVendorLogin(), 300);
+
+    const btn = document.querySelector('#sc5-2 .submit-btn');
+    const origLabel = btn ? btn.innerHTML : '';
+    if (btn) { btn.innerHTML = '등록 중…'; btn.disabled = true; }
+    try {
+      // 백엔드에 회원가입 — 비밀번호까지 실제 저장됨 (POST /api/vendor/signup)
+      const res = await fetch(`${RENDER_SERVER_URL}/api/vendor/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        let msg = `회원가입 실패 (HTTP ${res.status})`;
+        try { const j = await res.json(); if (j.detail) msg = String(j.detail); } catch {}
+        alert(msg);   // 예: "이미 등록된 이메일입니다."
+        return;
+      }
+      const data = await res.json();
+      // 서버가 저장한 값으로 _currentVendor 구성
+      _currentVendor = {
+        company: data.company || company,
+        email:   data.email || email,
+        addr:    data.addr, tel: data.tel, bizno: data.bizno,
+        rebar_price: data.rebar_price, mas_price: data.mas_price,
+        rebar_stock: data.rebar_stock, mas_stock: data.mas_stock,
+      };
+      alert('판매자 등록이 완료되었습니다!');
+      document.getElementById('sc5-2').classList.add('hidden');
+      setTimeout(() => afterVendorLogin(), 300);
+    } catch (e) {
+      alert('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      if (btn) { btn.innerHTML = origLabel; btn.disabled = false; }
+    }
   }
 
   /* ══════════════════════════════════════════
