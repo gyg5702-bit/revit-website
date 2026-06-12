@@ -1644,7 +1644,7 @@
     👤 마이페이지
     <span id="mypage-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:#ef4444;border-radius:100px;font-size:10px;color:#fff;font-family:'JetBrains Mono',monospace;line-height:17px;text-align:center;padding:0 4px;font-weight:700"></span>
   </button>
-  <span id="user-badge" style="margin-left:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);display:none;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+  <span id="user-badge" onclick="logout()" style="margin-left:8px;font-size:12px;font-family:'Noto Sans KR',sans-serif;color:var(--orange);border:1px solid rgba(232,123,12,0.45);border-radius:7px;padding:7px 12px;cursor:pointer;display:none;white-space:nowrap;transition:all 0.2s" onmouseover="this.style.background='rgba(232,123,12,0.08)';this.style.borderColor='var(--orange)'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(232,123,12,0.45)'"></span>
 </div>
 
 <!-- ══════════════════════════════════
@@ -2463,6 +2463,11 @@
 ══════════════════════════════════ -->
 <div class="screen hidden" id="sc5-2">
   <div class="vendor-login-box" style="max-width:500px;overflow-y:auto;max-height:90vh">
+    <!-- 뒤로가기 -->
+    <button onclick="goSC51()" style="display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text-secondary);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;padding:0;margin-bottom:20px;transition:color 0.2s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      판매자 로그인으로
+    </button>
     <div style="text-align:center;margin-bottom:24px">
       <div class="vendor-badge-top">🏭 판매자 포털</div>
       <div style="font-size:20px;font-weight:900;letter-spacing:-0.5px">판매자 등록</div>
@@ -2605,7 +2610,21 @@
 
     <!-- ── 제품 관리 탭 ── -->
     <div id="panel-products" style="display:none">
-      <!-- 로그인한 업체 자재 종류에 맞게 JS로 동적 생성 -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+        <label style="font-size:13px;font-weight:700;color:var(--text-secondary)">취급 자재</label>
+        <select id="product-mat-select" onchange="buildProductPanel(this.value)" style="font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--steel-2);color:var(--text-primary);font-family:'Noto Sans KR',sans-serif;cursor:pointer">
+          <option value="rebar">🔩 철근</option>
+          <option value="masonry">🧱 조적조</option>
+          <option value="concrete">🏗️ 콘크리트</option>
+          <option value="formwork">🪵 거푸집</option>
+          <option value="steel">🔧 강재</option>
+          <option value="insulation">🌡️ 단열재</option>
+          <option value="finishing">🎨 마감재</option>
+          <option value="windows">🪟 창호·도어</option>
+        </select>
+        <span style="font-size:12px;color:var(--text-muted)">— 단가·재고를 입력하고 저장하면 백엔드에 반영됩니다</span>
+      </div>
+      <!-- 선택한 자재에 맞게 JS로 동적 생성 -->
       <div id="panel-products-content"></div>
     </div>
 
@@ -6304,12 +6323,15 @@
   function buildProductPanel(matType) {
     const container = document.getElementById('panel-products-content');
     if (!container) return;
+    // 잘못된/없는 타입이면 철근으로 폴백 (이메일 감지 실패해도 폼이 항상 뜨도록)
+    if (!PRODUCT_FORM_CONFIG[matType]) matType = 'rebar';
+    // 드롭다운 동기화
+    const sel = document.getElementById('product-mat-select');
+    if (sel && sel.value !== matType) sel.value = matType;
+    if (_currentVendor) _currentVendor.matType = matType;
+
     container.innerHTML = '';
     const cfg = PRODUCT_FORM_CONFIG[matType];
-    if (!cfg) {
-      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:32px;font-size:13px">취급 자재 정보가 없습니다.</p>';
-      return;
-    }
     const normal = cfg.fields.filter(f => !f.wide);
     const wide   = cfg.fields.filter(f =>  f.wide);
     const card   = document.createElement('div');
@@ -6325,6 +6347,14 @@
       ${wide.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">${wide.map(f=>`<div class="update-field" style="flex:1;min-width:200px"><label class="update-label">${f.label}</label><input class="update-input" type="${f.type}" id="${f.id}" placeholder="${f.ph}" style="width:100%"></div>`).join('')}</div>` : ''}
       <button onclick="saveProduct('${cfg.saveKey}')" style="margin-top:14px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='var(--orange-light)'" onmouseout="this.style.background='var(--orange)'">저장하기</button>`;
     container.appendChild(card);
+
+    // 기존 저장값 채우기 (백엔드/세션에 있던 값)
+    cfg.fields.forEach(f => {
+      const parts = f.id.split('-');        // u-{prefix}-{role}
+      const prefix = parts[1], role = parts.slice(2).join('_');
+      const v = _currentVendor ? _currentVendor[`${prefix}_${role}`] : null;
+      if (v != null && v !== '') { const el = document.getElementById(f.id); if (el) el.value = v; }
+    });
   }
 
   function afterVendorLogin() {
@@ -6332,25 +6362,16 @@
     document.getElementById('v-dashboard-title').textContent = name + ' 님, 안녕하세요 👋';
     document.getElementById('v-dashboard-sub').textContent   = '발주 요청을 확인하고 제품 정보를 관리하세요';
 
-    // 이메일로 자재 종류 감지 → 제품 관리 폼 동적 생성
-    const matType = detectMatTypeFromEmail(_currentVendor.email);
-    _currentVendor.matType = matType;
-    buildProductPanel(matType);
+    // 이메일로 자재 종류 추정(없으면 철근 기본) → 제품 관리 폼 생성. 드롭다운으로 언제든 변경 가능.
+    const matType = detectMatTypeFromEmail(_currentVendor.email) || 'rebar';
+    buildProductPanel(matType);   // 내부에서 드롭다운 동기화 + 저장값 자동 채움
 
-    // 기존 값 채우기 (자재 타입에 따라)
+    // 업체 정보 탭 기존 값 채우기
     const fill = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
     fill('ei-company', _currentVendor.company);
     fill('ei-bizno',   _currentVendor.bizno);
     fill('ei-tel',     _currentVendor.tel);
     fill('ei-addr',    _currentVendor.addr);
-    // 서버에서 불러온 단가/재고
-    if (matType === 'rebar') {
-      fill('u-rebar-price', _currentVendor.rebar_price);
-      fill('u-rebar-stock', _currentVendor.rebar_stock);
-    } else if (matType === 'masonry') {
-      fill('u-mas-price', _currentVendor.mas_price);
-      fill('u-mas-stock', _currentVendor.mas_stock);
-    }
 
     showScreen('sc5-3');
     showHeader(true);
@@ -6359,8 +6380,8 @@
     if (_mpBtn) _mpBtn.style.display = 'none';
     const _ub = document.getElementById('user-badge');
     if (_ub) {
-      _ub.innerHTML = `🏭 ${name} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
-      _ub.style.display = 'inline';
+      _ub.textContent = '로그아웃';
+      _ub.style.display = 'inline-block';
     }
     document.getElementById('back-btn').style.display = 'flex';
     setBackFn(() => {
@@ -6483,26 +6504,57 @@
 
   /* ── 제품 저장 ── */
   async function saveProduct(type) {
-    const isR    = type === 'rebar';
-    const key    = isR ? 'rebar' : 'mas';
-    const price  = parseFloat(document.getElementById(`u-${key}-price`).value) || null;
-    const stock  = parseFloat(document.getElementById(`u-${key}-stock`).value) || null;
-    const days   = document.getElementById(`u-${key}-days`).value || null;
-    const spec   = document.getElementById(`u-${key}-spec`).value || null;
+    const cfg = PRODUCT_FORM_CONFIG[type];
+    if (!cfg) return;
 
-    const body = isR
-      ? { rebar_price: price, rebar_stock: stock, rebar_days: days, rebar_spec: spec }
-      : { mas_price: price,   mas_stock: stock,   mas_days: days,   mas_spec: spec   };
+    // 폼 값 읽기 → 기존 백엔드 규칙(rebar_*, mas_*) + 제네릭 키 동시 구성
+    const body = { material_type: type, email: _currentVendor?.email };
+    cfg.fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (!el) return;
+      const parts  = f.id.split('-');           // u-{prefix}-{role}
+      const prefix = parts[1], role = parts.slice(2).join('_');
+      const val = f.type === 'number'
+        ? (el.value === '' ? null : parseFloat(el.value))
+        : (el.value || null);
+      body[`${prefix}_${role}`] = val;          // 예: rebar_price, rebar_stock, con_price ...
+      if (role === 'price')    body.unit_price = val;
+      if (role === 'stock')    body.stock      = val;
+      if (role === 'days')     body.lead_days  = val;
+      if (role === 'spec')     body.spec       = val;
+      if (role === 'minorder') body.min_order  = val;
+    });
+
+    // 세션에 반영 (폼 다시 열어도 값 유지)
+    if (_currentVendor) Object.assign(_currentVendor, body);
+    console.log('📤 [제품 저장] PUT /api/vendor/profile payload:\n' + JSON.stringify(body, null, 2));
+
+    const statusEl = document.getElementById(`${cfg.saveKey}-save-status`);
+    const showStatus = (txt, color) => {
+      if (!statusEl) return;
+      statusEl.textContent = txt; statusEl.style.color = color; statusEl.style.display = 'inline';
+      if (color === '#16a34a') setTimeout(() => statusEl.style.display = 'none', 2500);
+    };
 
     try {
-      await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(_currentVendor?.email)}`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      const res = await fetch(`${RENDER_SERVER_URL}/api/vendor/profile?email=${encodeURIComponent(_currentVendor?.email)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(20000),
       });
-    } catch {}
-
-    const statusEl = document.getElementById(`${isR ? 'rebar' : 'masonry'}-save-status`);
-    statusEl.style.display = 'inline';
-    setTimeout(() => statusEl.style.display = 'none', 2500);
+      if (res.ok) {
+        showStatus('✓ 백엔드에 저장됨', '#16a34a');
+      } else {
+        const t = await res.text().catch(() => '');
+        console.error('제품 저장 실패', res.status, t);
+        showStatus(`✕ 저장 실패 (HTTP ${res.status})`, '#dc2626');
+      }
+    } catch (e) {
+      const reason = e.name === 'TimeoutError' ? '시간 초과(서버 응답 없음)' : (e.message || '네트워크 오류');
+      console.error('제품 저장 오류', reason);
+      showStatus(`✕ 저장 실패 (${reason})`, '#dc2626');
+    }
   }
 
   /* ── 업체 정보 저장 ── */
@@ -6697,8 +6749,8 @@
     }
     const ub = document.getElementById('user-badge');
     if (ub && _currentUser) {
-      ub.innerHTML = `👤 ${_currentUser.name || _currentUser.email} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
-      ub.style.display = 'inline';
+      ub.textContent = '로그아웃';
+      ub.style.display = 'inline-block';
     }
 
     document.getElementById('sc4-1').classList.add('hidden');
@@ -6829,8 +6881,8 @@
       _currentUser = a;
       const badge = document.getElementById('user-badge');
       if (badge) {
-        badge.innerHTML = `👤 ${a.name || a.email} <span onclick="logout()" style="margin-left:8px;color:var(--orange);cursor:pointer;text-decoration:underline">로그아웃</span>`;
-        badge.style.display = 'inline';
+        badge.textContent = '로그아웃';
+        badge.style.display = 'inline-block';
       }
       // 이미 로그인된 경우 splash 건너뛰고 modesel로
       document.getElementById('splash').classList.add('hidden');
