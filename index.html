@@ -1618,6 +1618,8 @@
     border-color: rgba(139,92,246,0.4);
   }
 </style>
+<!-- 우편번호 검색 (다음/카카오 우편번호 서비스 — 국가 공식 주소 데이터 기반, 키 불필요) -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 
@@ -2001,7 +2003,13 @@
         </div>
         <div class="field-wrap full">
           <label class="field-label">현장 주소 <span style="color:var(--text-muted);font-size:11px">(거리 기반 업체 추천에 사용)</span></label>
-          <input class="field-input" type="text" id="proj-addr" placeholder="예) 경기도 용인시 기흥구 덕영대로 1732">
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <input class="field-input" type="text" id="proj-zipcode" placeholder="우편번호" readonly style="max-width:130px;flex:0 0 auto">
+            <button type="button" onclick="openPostcode('proj-zipcode','proj-addr')" style="padding:0 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap">🔍 우편번호 검색</button>
+            <button type="button" onclick="fillCurrentLocation('proj-addr','proj-zipcode',this)" style="padding:0 16px;background:transparent;color:var(--text-secondary);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap">📍 현재 위치</button>
+          </div>
+          <input class="field-input" type="text" id="proj-addr" placeholder="기본 주소 (우편번호 검색 또는 현재 위치)">
+          <input class="field-input" type="text" id="proj-addr-detail" placeholder="상세 주소 (동·호수 등, 선택)" style="margin-top:8px">
         </div>
         <div class="field-wrap">
           <label class="field-label">희망 납기일</label>
@@ -2486,7 +2494,13 @@
     </div>
     <div class="lfield">
       <label class="llabel">업체 주소 <span style="color:#ef4444">*</span></label>
-      <input class="linput" type="text" id="v-addr" placeholder="경기도 수원시 권선구 산업로 156">
+      <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <input class="linput" type="text" id="v-zipcode" placeholder="우편번호" readonly style="max-width:130px;flex:0 0 auto">
+        <button type="button" onclick="openPostcode('v-zipcode','v-addr')" style="padding:0 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap">🔍 우편번호 검색</button>
+        <button type="button" onclick="fillCurrentLocation('v-addr','v-zipcode',this)" style="padding:0 16px;background:transparent;color:var(--text-secondary);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap">📍 현재 위치</button>
+      </div>
+      <input class="linput" type="text" id="v-addr" placeholder="기본 주소 (우편번호 검색 또는 현재 위치)">
+      <input class="linput" type="text" id="v-addr-detail" placeholder="상세 주소 (동·호수 등, 선택)" style="margin-top:8px">
     </div>
     <div class="lfield">
       <label class="llabel">대표 연락처 <span style="color:#ef4444">*</span></label>
@@ -2494,38 +2508,45 @@
     </div>
 
     <!-- 취급 제품 -->
-    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin:20px 0 12px">02 · 취급 제품</p>
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin:20px 0 12px">02 · 취급 제품 <span style="color:var(--text-muted);font-weight:300;font-size:10px;text-transform:none;letter-spacing:0">(여러 개 선택 가능)</span></p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
       <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
-        <input type="checkbox" id="v-prod-rebar" style="width:16px;height:16px;accent-color:var(--orange)">
+        <input type="checkbox" id="v-prod-rebar" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
         <span style="font-size:14px">🔩 철근</span>
       </label>
       <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
-        <input type="checkbox" id="v-prod-masonry" style="width:16px;height:16px;accent-color:var(--orange)">
+        <input type="checkbox" id="v-prod-masonry" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
         <span style="font-size:14px">🧱 조적조</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-concrete" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🏗️ 콘크리트</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-formwork" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🪵 거푸집</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-steel" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🔧 강재</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-insulation" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🌡️ 단열재</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-finishing" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🎨 마감재</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--steel-3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='rgba(232,123,12,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="v-prod-windows" onchange="renderVendorPriceFields()" style="width:16px;height:16px;accent-color:var(--orange)">
+        <span style="font-size:14px">🪟 창호·도어</span>
       </label>
     </div>
 
-    <!-- 단가 / 재고 -->
-    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">03 · 초기 단가 / 재고</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div class="lfield">
-        <label class="llabel">철근 단가 (원/ton)</label>
-        <input class="linput" type="number" id="v-price-rebar" placeholder="1035000">
-      </div>
-      <div class="lfield">
-        <label class="llabel">조적 단가 (원/장)</label>
-        <input class="linput" type="number" id="v-price-masonry" placeholder="85">
-      </div>
-      <div class="lfield">
-        <label class="llabel">철근 재고 (ton)</label>
-        <input class="linput" type="number" id="v-stock-rebar" placeholder="50">
-      </div>
-      <div class="lfield">
-        <label class="llabel">조적 재고 (장)</label>
-        <input class="linput" type="number" id="v-stock-masonry" placeholder="10000">
-      </div>
-    </div>
+    <!-- 단가 / 재고 (선택한 자재만) -->
+    <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">03 · 초기 단가 / 재고 <span style="color:var(--text-muted);font-weight:300;font-size:10px;text-transform:none;letter-spacing:0">(선택한 자재만 표시)</span></p>
+    <div id="v-price-stock-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
 
     <!-- 패밀리 파일 -->
     <p style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#386CC8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">04 · 패밀리 파일 등록 <span style="color:var(--text-muted);font-weight:300;font-size:10px">(선택)</span></p>
@@ -3094,6 +3115,97 @@
   function setBackFn(fn) {
     document.getElementById('back-btn').onclick = fn;
     document.getElementById('back-btn').style.display = 'flex';
+  }
+
+  /* ── 주소: 우편번호 검색 + 현재 위치 ── */
+  // 다음(카카오) 우편번호 서비스 팝업 → 우편번호 + 기본주소 채움
+  function openPostcode(zipId, addrId) {
+    if (typeof daum === 'undefined' || !daum.Postcode) {
+      alert('우편번호 서비스를 불러오지 못했습니다.\n인터넷 연결을 확인하거나, 주소를 직접 입력해주세요.');
+      return;
+    }
+    new daum.Postcode({
+      oncomplete: function (data) {
+        const zip = document.getElementById(zipId);
+        const addr = document.getElementById(addrId);
+        if (zip)  zip.value  = data.zonecode || '';
+        if (addr) {
+          // 도로명주소 우선, 없으면 지번주소
+          let base = data.roadAddress || data.jibunAddress || '';
+          // 참고항목(법정동/건물명) 부가
+          let extra = '';
+          if (data.bname && /[동|로|가]$/.test(data.bname)) extra += data.bname;
+          if (data.buildingName && data.apartment === 'Y') extra += (extra ? ', ' : '') + data.buildingName;
+          addr.value = extra ? `${base} (${extra})` : base;
+          addr.focus();
+        }
+        // 상세주소 칸이 있으면 거기로 포커스
+        const detail = document.getElementById(addrId + '-detail');
+        if (detail) detail.focus();
+      }
+    }).open();
+  }
+
+  // Nominatim(OpenStreetMap) 역지오코딩 응답 → 한국식 주소 문자열
+  function formatKoreanAddress(data) {
+    const a = (data && data.address) || {};
+    const parts = [
+      a.state || a.province,                                   // 도/특별시
+      a.city || a.county || a.town,                            // 시/군
+      a.city_district || a.borough || a.district,              // 구
+      a.suburb || a.quarter || a.neighbourhood || a.village,   // 동/읍/면
+      a.road,                                                  // 도로명
+      a.house_number,                                          // 건물번호
+    ].filter(Boolean);
+    // 중복 제거
+    const seen = new Set();
+    const out = parts.filter(p => (seen.has(p) ? false : (seen.add(p), true)));
+    return out.join(' ') || (data && data.display_name) || '';
+  }
+
+  // 브라우저 현재 위치 → 역지오코딩 → 주소(+우편번호) 자동 입력
+  function fillCurrentLocation(addrId, zipId, btn) {
+    if (!navigator.geolocation) {
+      alert('이 브라우저는 위치 기능을 지원하지 않습니다. 우편번호 검색을 이용해주세요.');
+      return;
+    }
+    const orig = btn ? btn.textContent : '';
+    if (btn) { btn.textContent = '📍 위치 확인 중…'; btn.disabled = true; }
+    const restore = () => { if (btn) { btn.textContent = orig; btn.disabled = false; } };
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=ko`,
+          { headers: { 'Accept': 'application/json' } }
+        );
+        const data = await res.json();
+        const addr = formatKoreanAddress(data);
+        const addrEl = document.getElementById(addrId);
+        if (addr && addrEl) addrEl.value = addr;
+        const pc = data && data.address && data.address.postcode;
+        if (pc && zipId) { const z = document.getElementById(zipId); if (z) z.value = pc; }
+        if (!addr) alert('현재 위치의 주소를 찾지 못했습니다. 우편번호 검색을 이용해주세요.');
+      } catch (e) {
+        alert('주소 변환에 실패했습니다. 우편번호 검색을 이용해주세요.');
+      } finally {
+        restore();
+      }
+    }, (err) => {
+      restore();
+      const msg = err.code === 1 ? '위치 권한이 거부되었습니다. 브라우저 주소창의 위치 권한을 허용해주세요.'
+                : err.code === 3 ? '위치 확인 시간이 초과되었습니다. 다시 시도해주세요.'
+                : '현재 위치를 가져올 수 없습니다.';
+      alert(msg);
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+  }
+
+  // 기본주소 + 상세주소 결합해서 반환
+  function getFullAddr(baseId) {
+    const base   = (document.getElementById(baseId)?.value || '').trim();
+    const detail = (document.getElementById(baseId + '-detail')?.value || '').trim();
+    return detail ? `${base} ${detail}`.trim() : base;
   }
   function triggerAnim(selector) {
     document.querySelectorAll(selector).forEach(el => {
@@ -4062,15 +4174,26 @@
   }
 
   // MODE 02 카드 → 프로젝트 선택 화면
+  // 복귀 시에도 각 화면의 뒤로가기가 항상 올바르게 유지되도록 이름있는 back 함수 사용
+  function bimBackToModesel() {
+    document.getElementById('sc-bim-proj').classList.add('hidden');
+    setTimeout(() => { showScreen('modesel'); setBackFn(goSplash); triggerAnim('#modesel .ms-inner > *'); }, 300);
+  }
+  function bimBackToProj() {
+    document.getElementById('sc-bim-mat').classList.add('hidden');
+    setTimeout(() => { showScreen('sc-bim-proj'); setBackFn(bimBackToModesel); loadBIMProjectList(); }, 300);
+  }
+  function sc31BackToModesel() {
+    document.getElementById('sc3-1').classList.add('hidden');
+    setTimeout(() => { showScreen('modesel'); setBackFn(goSplash); triggerAnim('#modesel .ms-inner > *'); }, 300);
+  }
+
   function startBIMFlow() {
     document.getElementById('modesel').classList.add('hidden');
     setTimeout(() => {
       showScreen('sc-bim-proj');
       showHeader(true);
-      setBackFn(() => {
-        document.getElementById('sc-bim-proj').classList.add('hidden');
-        setTimeout(() => { showScreen('modesel'); setBackFn(goSplash); triggerAnim('#modesel .ms-inner > *'); }, 300);
-      });
+      setBackFn(bimBackToModesel);
       document.getElementById('sc-bim-proj').scrollTop = 0;
       loadBIMProjectList();
     }, 300);
@@ -4192,10 +4315,7 @@
     setTimeout(() => {
       showScreen('sc-bim-mat');
       showHeader(true);
-      setBackFn(() => {
-        document.getElementById('sc-bim-mat').classList.add('hidden');
-        setTimeout(() => { showScreen('sc-bim-proj'); loadBIMProjectList(); }, 300);
-      });
+      setBackFn(bimBackToProj);
       document.getElementById('sc-bim-mat').scrollTop = 0;
       renderBIMMaterialScreen();
     }, 300);
@@ -4327,7 +4447,7 @@
       triggerAnim('#sc2-3 .sc3-inner > *');
       setBackFn(() => {
         document.getElementById('sc2-3').classList.add('hidden');
-        setTimeout(() => { showScreen('sc-bim-mat'); renderBIMMaterialScreen(); }, 300);
+        setTimeout(() => { showScreen('sc-bim-mat'); setBackFn(bimBackToProj); renderBIMMaterialScreen(); }, 300);
       });
       document.getElementById('sc2-3').scrollTop = 0;
       showCurrentMaterial();
@@ -4341,10 +4461,7 @@
     setTimeout(() => {
       showScreen('sc3-1');
       showHeader(true);
-      setBackFn(() => {
-        document.getElementById('sc3-1').classList.add('hidden');
-        setTimeout(() => { showScreen('modesel'); setBackFn(goSplash); triggerAnim('#modesel .ms-inner > *'); }, 300);
-      });
+      setBackFn(sc31BackToModesel);
       document.getElementById('sc3-1').scrollTop = 0;
       triggerAnim('#sc3-1 .sc31-inner > *');
 
@@ -4546,7 +4663,7 @@
       showHeader(true);
       setBackFn(() => {
         document.getElementById('sc3-2').classList.add('hidden');
-        setTimeout(() => { showScreen('sc3-1'); }, 300);
+        setTimeout(() => { showScreen('sc3-1'); setBackFn(sc31BackToModesel); }, 300);
       });
       document.getElementById('sc3-2').scrollTop = 0;
 
@@ -5469,7 +5586,7 @@
   let _vendorRoadKms = {};  // 자재타입별 OSRM 도로거리 캐시
 
   async function submitOrder() {
-    const addr = document.getElementById('proj-addr').value.trim();
+    const addr = getFullAddr('proj-addr');
     const name = document.getElementById('proj-name').value.trim();
     if (!addr || !name) { alert('공사명과 현장 주소를 입력해주세요.'); return; }
 
@@ -5718,7 +5835,7 @@
   /* ── 최종 확인 페이지 (SC2-3.5) ── */
   function showConfirmPage() {
     const projName = document.getElementById('proj-name').value || '—';
-    const projAddr = document.getElementById('proj-addr').value || '—';
+    const projAddr = getFullAddr('proj-addr') || '—';
     const projDate = document.getElementById('proj-date').value || '—';
 
     document.getElementById('cf-projname').textContent = projName;
@@ -5837,7 +5954,8 @@
     document.getElementById('order-num-display').textContent = orderDisplayNo;
 
     const projName   = document.getElementById('proj-name').value || '—';
-    const projAddr   = document.getElementById('proj-addr').value || '—';
+    const projAddr   = getFullAddr('proj-addr') || '—';
+    const projZip    = document.getElementById('proj-zipcode')?.value || '';
     const projDate   = document.getElementById('proj-date').value || '—';
     const buyerEmail = _currentUser?.email || 'guest@baedalcheolgeun.kr';
     const buyerName  = _currentUser?.name  || '게스트';
@@ -5881,6 +5999,7 @@
         total_price:   total,
         site_name:     projName,
         site_addr:     projAddr,
+        site_zipcode:  projZip,
         delivery_date: deliveryDate,
       };
       console.log('📤 [발주 POST payload] /api/orders 로 전송하는 데이터:\n' + JSON.stringify(orderPayload, null, 2));
@@ -6150,7 +6269,7 @@
   }
   function goSC52() {
     document.getElementById('sc5-1').classList.add('hidden');
-    setTimeout(() => showScreen('sc5-2'), 300);
+    setTimeout(() => { showScreen('sc5-2'); renderVendorPriceFields(); }, 300);
   }
   function goBackFromVendor() {
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
@@ -6225,6 +6344,41 @@
     }
   }
 
+  // 판매자 등록 — 8개 자재 정의 (구매자와 동일)
+  const VENDOR_SIGNUP_MATS = [
+    { key:'rebar',      prefix:'rebar',      priceLabel:'철근 단가 (원/ton)',        pricePh:'1035000', stockLabel:'철근 재고 (ton)',        stockPh:'50' },
+    { key:'masonry',    prefix:'mas',        priceLabel:'조적 단가 (원/장)',          pricePh:'85',      stockLabel:'조적 재고 (장)',          stockPh:'10000' },
+    { key:'concrete',   prefix:'concrete',   priceLabel:'콘크리트 단가 (원/㎥)',      pricePh:'116000',  stockLabel:'일 최대 타설량 (㎥)',     stockPh:'500' },
+    { key:'formwork',   prefix:'formwork',   priceLabel:'거푸집 임대단가 (원/㎡·일)', pricePh:'3800',    stockLabel:'거푸집 재고 (㎡)',        stockPh:'5000' },
+    { key:'steel',      prefix:'steel',      priceLabel:'강재 단가 (원/ton)',         pricePh:'920000',  stockLabel:'강재 재고 (ton)',         stockPh:'30' },
+    { key:'insulation', prefix:'insulation', priceLabel:'단열재 단가 (원/㎡)',        pricePh:'15000',   stockLabel:'단열재 재고 (㎡)',        stockPh:'5000' },
+    { key:'finishing',  prefix:'finishing',  priceLabel:'마감재 단가 (원/㎡)',        pricePh:'26000',   stockLabel:'마감재 재고 (㎡)',        stockPh:'3000' },
+    { key:'windows',    prefix:'windows',    priceLabel:'창호 단가 (원/㎡)',          pricePh:'295000',  stockLabel:'창호 납기 (주)',          stockPh:'4' },
+  ];
+
+  // 체크한 자재의 단가·재고 입력란만 표시 (기존 입력값은 보존)
+  function renderVendorPriceFields() {
+    const wrap = document.getElementById('v-price-stock-fields');
+    if (!wrap) return;
+    const saved = {};
+    VENDOR_SIGNUP_MATS.forEach(m => {
+      const p = document.getElementById('v-price-' + m.key);
+      const s = document.getElementById('v-stock-' + m.key);
+      if (p) saved['v-price-' + m.key] = p.value;
+      if (s) saved['v-stock-' + m.key] = s.value;
+    });
+    const checked = VENDOR_SIGNUP_MATS.filter(m => document.getElementById('v-prod-' + m.key)?.checked);
+    if (checked.length === 0) {
+      wrap.innerHTML = '<p style="grid-column:1 / -1;font-size:12px;color:var(--text-muted);padding:6px 0;margin:0">위에서 취급 자재를 선택하면 단가·재고 입력란이 나타납니다.</p>';
+      return;
+    }
+    wrap.innerHTML = checked.map(m => `
+      <div class="lfield"><label class="llabel">${m.priceLabel}</label><input class="linput" type="number" id="v-price-${m.key}" placeholder="${m.pricePh}"></div>
+      <div class="lfield"><label class="llabel">${m.stockLabel}</label><input class="linput" type="number" id="v-stock-${m.key}" placeholder="${m.stockPh}"></div>
+    `).join('');
+    Object.entries(saved).forEach(([id, val]) => { const el = document.getElementById(id); if (el && val) el.value = val; });
+  }
+
   async function doVendorSignup() {
     const company = document.getElementById('v-company').value.trim();
     const email   = document.getElementById('vs-email').value.trim().toLowerCase();
@@ -6234,17 +6388,22 @@
     if (pw !== pw2) { alert('비밀번호가 일치하지 않습니다.'); return; }
     if (pw.length < 8) { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
 
-    const num = (id) => parseFloat(document.getElementById(id).value) || null;
+    const num = (id) => { const el = document.getElementById(id); return el && el.value !== '' ? (parseFloat(el.value) || null) : null; };
+    const matTypes = VENDOR_SIGNUP_MATS.filter(m => document.getElementById('v-prod-' + m.key)?.checked).map(m => m.key);
     const payload = {
       email, password: pw, company,
-      addr:        document.getElementById('v-addr').value,
-      tel:         document.getElementById('v-tel').value,
-      bizno:       document.getElementById('v-bizno').value,
-      rebar_price: num('v-price-rebar'),
-      mas_price:   num('v-price-masonry'),
-      rebar_stock: num('v-stock-rebar'),
-      mas_stock:   num('v-stock-masonry'),
+      addr:  getFullAddr('v-addr'),
+      zipcode: document.getElementById('v-zipcode')?.value || '',
+      tel:   document.getElementById('v-tel').value,
+      bizno: document.getElementById('v-bizno').value,
+      material_types: matTypes,
     };
+    // 선택한 자재의 단가/재고를 payload에 포함 (rebar_*, mas_* 등 기존 백엔드 규칙과 호환)
+    VENDOR_SIGNUP_MATS.forEach(m => {
+      payload[`${m.prefix}_price`] = num('v-price-' + m.key);
+      payload[`${m.prefix}_stock`] = num('v-stock-' + m.key);
+    });
+    console.log('📤 [판매자 등록] payload:\n' + JSON.stringify(payload, null, 2));
 
     const btn = document.querySelector('#sc5-2 .submit-btn');
     const origLabel = btn ? btn.innerHTML : '';
